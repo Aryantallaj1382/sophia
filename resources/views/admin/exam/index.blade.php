@@ -1,82 +1,64 @@
-@include('admin.upad')
+@extends('admin.layouts.app')
 
-<div class="container py-4" dir="rtl">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold mb-0 text-primary">📑 مدیریت آزمون‌ها</h3>
-        <a href="{{ route('admin.exams.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
-            ➕ آزمون جدید
-        </a>
-    </div>
+@section('title', 'آزمون‌ها')
+@section('content')
+    <div class="container mx-auto py-6" dir="rtl">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-semibold text-gray-800">📑 مدیریت آزمون‌ها</h3>
+            <a href="{{ route('admin.exams.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                ➕ آزمون جدید
+            </a>
+        </div>
 
-    <div class="table-responsive shadow-sm rounded-3">
-        <table class="table table-striped table-hover align-middle mb-0">
-            <thead class="bg-primary text-white">
-            <tr>
-                <th>نام</th>
-                <th>نوع</th>
-                <th>توضیح</th>
-                <th>تاریخ انقضا</th>
-                <th>دفعات مجاز</th>
-                <th>تعداد بخش‌ها</th>
-                <th>مدت زمان</th>
-                <th>ویو</th>
-                <th>عملیات</th>
-            </tr>
-            </thead>
-            <tbody>
-            @forelse($exams as $exam)
+        <div class="overflow-x-auto bg-white shadow rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                 <tr>
-                    <td class="fw-bold">{{ $exam->name }}</td>
-                    <td><span class="badge bg-danger-subtle text-green-700 fw-semibold">{{ $exam->type }}</span></td>
-
-                    <td class="text-muted"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="{{ $exam->description }}">
-                        {{ \Illuminate\Support\Str::words($exam->description, 5, '...') }}
-                    </td>
-                    <td><span class="badge bg-danger-subtle text-danger fw-semibold">{{ $exam->expiration }}</span></td>
-                    <td><span class="badge bg-info-subtle text-info">{{ $exam->number_of_attempts }}</span></td>
-                    <td><span class="badge bg-primary-subtle text-primary">{{ $exam->number_of_sections }}</span></td>
-                    <td><span class="badge bg-warning-subtle text-dark">{{ $exam?->duration?->format('H:i:s') }} دقیقه</span></td>
-                    <td><span class="badge bg-success-subtle text-success">{{ $exam->view }}</span></td>
-                    <td>
-                        <div class="btn-group flex items-center gap-2">
-                            <a href="{{ route('admin.exams.show', $exam->id) }}"
-                               class="btn btn-sm btn-outline-info">👁 مشاهده</a>
-                            <a href="{{ route('admin.exams.students', $exam->id) }}"
-                               class="btn btn-sm btn-outline-primary">👁 لیست دانش آموزان</a>
-                            <a href="{{ route('admin.exams.edit', $exam->id) }}"
-                               class="btn btn-sm btn-outline-secondary">✏️ ویرایش</a>
-                            <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST"
-                                  onsubmit="return confirm('آیا از حذف این آزمون مطمئن هستید؟')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-outline-danger">🗑 حذف</button>
-                            </form>
-                        </div>
-                    </td>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">نام</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">نوع</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">توضیح</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">تاریخ انقضا</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">دفعات مجاز</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">تعداد بخش‌ها</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">مدت زمان</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">ویو</th>
+                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">عملیات</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="8" class="text-center text-muted py-4">
-                        🚫 هیچ آزمونی یافت نشد.
-                    </td>
-                </tr>
-            @endforelse
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                @forelse($exams as $exam)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 text-gray-700 font-medium">{{ $exam->name }}</td>
+                        <td class="px-4 py-2 text-gray-700">{{ $exam->type }}</td>
+                        <td class="px-4 py-2 text-gray-500">{{ \Illuminate\Support\Str::words($exam->description, 5, '...') }}</td>
+                        <td class="px-4 py-2 text-gray-700">{{ $exam->expiration }}</td>
+                        <td class="px-4 py-2 text-gray-700">{{ $exam->number_of_attempts }}</td>
+                        <td class="px-4 py-2 text-gray-700">{{ $exam->number_of_sections }}</td>
+                        <td class="px-4 py-2 text-gray-700">{{ $exam?->duration?->format('H:i') }} دقیقه</td>
+                        <td class="px-4 py-2 text-gray-700">{{ $exam->view }}</td>
+                        <td class="px-4 py-2">
+                            <div class="flex gap-2">
+                                <a href="{{ route('admin.exams.show', $exam->id) }}" class="text-blue-600 hover:underline">مشاهده</a>
+                                <a href="{{ route('admin.exams.edit', $exam->id) }}" class="text-gray-600 hover:underline">ویرایش</a>
+                                <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST" onsubmit="return confirm('آیا مطمئن هستید؟');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:underline">حذف</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="9" class="px-4 py-6 text-center text-gray-400">🚫 هیچ آزمونی یافت نشد.</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
 
-    <div class="mt-3">
-        {{ $exams->links('pagination::bootstrap-5') }}
+        <div class="mt-4">
+            {{ $exams->links('pagination::tailwind') }}
+        </div>
     </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    });
-</script>
+@endsection

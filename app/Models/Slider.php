@@ -9,6 +9,6 @@ class Slider extends Model
     protected $fillable = ['image', 'link'];
     public function getImageAttribute($value)
     {
-        return $value ? url($value) : null;
+        return $value ? url('public/'.$value) : null;
     }
 }

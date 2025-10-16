@@ -16,17 +16,20 @@ class Book extends Model
         'description',
         'image',
         'view_count',
+        'book_type',
         'video',
         'file',
-        ];
+    ];
 
     protected $casts = [
         'topics' => 'array',
     ];
+
     public function professors()
     {
         return $this->belongsToMany(Professor::class, 'book_professor');
     }
+
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
@@ -34,7 +37,7 @@ class Book extends Model
 
     public function getImageAttribute($value)
     {
-        return $value ? url('public/'.$value) : null;
+        return $value ? url('public/' . $value) : null;
     }
 
     public function ageGroups()
@@ -51,6 +54,7 @@ class Book extends Model
     {
         return $this->hasMany(BookSamplePage::class);
     }
+
     public function scopeFilter($query, $filters)
     {
         if (!empty($filters['sort_by'])) {
@@ -85,7 +89,7 @@ class Book extends Model
         }
 
         if (!empty($filters['volumes'])) {
-            $volumeFilter = (int) $filters['volumes'];
+            $volumeFilter = (int)$filters['volumes'];
             if ($volumeFilter === 1) {
                 $query->where('volume', 1);
             } elseif ($volumeFilter === 2) {
@@ -133,10 +137,12 @@ class Book extends Model
 
         return $query;
     }
+
     public function likes()
     {
         return $this->morphMany(Like::class, 'likeable');
     }
+
     protected $appends = ['is_like'];
 
     public function getIsLikeAttribute()
@@ -149,10 +155,12 @@ class Book extends Model
 
         return $this->likes()->where('user_id', $userId)->exists();
     }
+
     public function ratings()
     {
         return $this->morphMany(Rating::class, 'ratable');
     }
+
     public function getRateAttribute()
     {
         if (!auth()->check()) {

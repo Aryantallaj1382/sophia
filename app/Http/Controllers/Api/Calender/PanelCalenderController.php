@@ -167,7 +167,6 @@ class   PanelCalenderController extends Controller
 
             }
 
-            // Private Classes
             if ($type === 'all' || $type === 'private') {
                 $privateClasses = PrivateClassReservation::where('user_id', $student->id)
                     ->whereHas('timeSlots', fn($q) => $q->whereDate('date', $gregorianDate))

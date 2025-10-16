@@ -87,7 +87,7 @@
         <h2>Your Verification Code</h2>
     </div>
     <div class="content">
-        <p>Welcome to Lingomasters</p>
+        <p>Welcome to lucy</p>
         <p>To verify your request,</p>
         <p>please enter the verification code below:</p>
         <div class="otp-code">

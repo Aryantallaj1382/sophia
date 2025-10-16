@@ -21,7 +21,7 @@ class InterestController extends Controller
                 'group'   => \App\Models\GroupClass::class,
                 'webinar' => \App\Models\Webinar::class,
                 'books' => \App\Models\Book::class,
-                'mock_test' => \App\Models\Book::class,
+                'mock_test' => \App\Models\Exam::class,
             ];
 
             if (isset($map[$type])) {
@@ -32,11 +32,13 @@ class InterestController extends Controller
         $likes = $query->paginate();
          $likes->getCollection()->transform(function ($item) {
             return [
-                'id'            => $item->id,
+                'id'            => $item->likeable->id,
                 'user_id'       => $item->user_id,
-                'date' =>           $item->nearest_open_time ?? null,
+                'exam_type'       => $item->likeable?->type ?? null,
+                'date' =>           $item?->created_at?->format('d M') ?? null,
+                'time' =>           $item?->created_at?->format('H:i') ?? null,
                 'title'         => $item->likeable->title ?? $item->likeable->name ?? null,
-                'image'         => $item->likeable->image ?? null,
+                'image' => $item->likeable->image ?? $item->likeable?->user?->profile,
                 'likeable_type' => class_basename($item->likeable_type),
             ];
         });

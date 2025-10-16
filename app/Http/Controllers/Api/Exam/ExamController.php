@@ -105,9 +105,9 @@ class ExamController extends Controller
             'duration' => $exam->duration?->format("H:i:s") ?? null,
             'view' => $exam->view,
             'type' => $exam->type,
-            'age_group' => $exam->ageGroup->title,
-            'language_level' => $exam->languageLevel->title,
-            'skill' => $exam->skill->name,
+            'age_group' => $exam?->ageGroup?->title,
+            'language_level' => $exam?->languageLevel?->title,
+            'skill' => $exam?->skill?->name,
             'is_like' => $exam->is_like,
             'avg_rate' => (int)$exam->ratings()->avg('rating') ?? 0,
             'all_rate' => $exam->ratings()->count(),
@@ -352,10 +352,7 @@ class ExamController extends Controller
 
         $partNumber = $request->input('part', 0);
 
-        if ($partNumber == 0) {
-            $data = $this->part_0($examId);
-            return response()->json($data);
-        }
+
         $exam_student = ExamStudent::where('exam_id', $examId)->where('student_id', $student->id)->where('status', '!=', 'completed')->where('student_id', $student->id)->latest()->first();
         if (!$exam_student) {
             return api_response([], 'please puy the exam', 422);
@@ -370,14 +367,19 @@ class ExamController extends Controller
         }
         $hours = (int)$exam->duration->format('H'); // ساعت
         $minutes = (int)$exam->duration->format('i'); // دقیقه
-        $exam_student->update([
-            'status' => 'in_progress',
-            'expired_at' => Carbon::now()->addHours($hours)->addMinutes($minutes),
-            'started_at' => Carbon::now(),
-
-        ]);
+        $updateData = ['status' => 'in_progress', 'started_at' => Carbon::now()];
+        if (is_null($exam_student->expired_at)) {
+            $updateData['expired_at'] = Carbon::now()->addHours($hours)->addMinutes($minutes);
+        }
 
 
+        $exam_student->update($updateData);
+
+
+        if ($partNumber == 0) {
+            $data = $this->part_0($examId , $exam_student->expired_at);
+            return response()->json($data);
+        }
         $part = $exam->parts()->where('number', $partNumber)->first();
         if (!$part) {
             return api_response([], 'بخش مورد نظر یافت نشد');
@@ -424,11 +426,26 @@ class ExamController extends Controller
 
             return $base;
         });
+        $now = Carbon::now('UTC')->floorSecond(); // نادیده گرفتن میلی‌ثانیه
+        $expired = Carbon::parse($exam_student->expired_at)->setTimezone('UTC')->floorSecond();
 
+        if ($expired->greaterThan($now)) {
+            $diffInSeconds = $expired->diffInSeconds($now);
+
+            $hours = floor($diffInSeconds / 3600);
+            $minutes = floor(($diffInSeconds % 3600) / 60);
+            $seconds = $diffInSeconds % 60;
+
+            $duration = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+        } else {
+            $duration = '00:00:00';
+        }
         $api = [
+
             'part_id' => $part->id,
             'part_title' => $part->title,
-            'duration' => $exam->duration->format('H:i:s'),
+            'duration' => $duration,
+
             'passenger' => $part->passenger,
             'passenger_title' => $part->passenger_title,
             'questions_title' => $part->question_title,

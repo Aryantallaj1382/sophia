@@ -29,6 +29,7 @@ class Blog extends Model
         'views',
         'type',
         'category',
+        'image'
     ];
 
     /**

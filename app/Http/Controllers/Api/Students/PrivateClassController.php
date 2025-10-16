@@ -227,7 +227,7 @@ class PrivateClassController extends Controller
                     'home_work' => $firstHomeWork ? [
                         'id' => $firstHomeWork->id,
                         'title' => $firstHomeWork->title,
-                        'answer' => $firstHomeWork->answer,
+                        'answer' => $firstHomeWork->answer ? url("public/".$firstHomeWork->answer) : null,
                         'is_reading' => (int)$firstHomeWork->is_reading,
                         'status' => $firstHomeWork->status,
                     ] : null,
@@ -254,8 +254,18 @@ class PrivateClassController extends Controller
 
         $data = [];
 
+
         if ($request->hasFile('answer')) {
-            $data['answer'] = $request->file('answer')->store('answers', 'public');
+            $file = $request->file('answer');
+
+            // مسیر در public اصلی
+            $destinationPath = public_path('student/answer'); // public/comment/voices
+            $fileName = time() . '_' . $file->getClientOriginalName();
+
+            // انتقال فایل به مسیر
+            $file->move($destinationPath, $fileName);
+
+            $data['answer'] = 'student/answer/' . $fileName; // مسیر برای ذخیره در دیتابیس یا ارسال به کلاینت
         }
 
         if ($request->filled('doing')) {

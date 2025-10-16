@@ -1,18 +1,23 @@
 <?php
 
-use App\Http\Controllers\AdminExam\ExamController;
-use App\Http\Controllers\AdminExam\ExamQuestionController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\AdminBlogsController;
+use App\Http\Controllers\Admin\AdminBookController;
+use App\Http\Controllers\Admin\AdminExam\ExamController;
+use App\Http\Controllers\Admin\AdminExam\ExamQuestionController;
+use App\Http\Controllers\Admin\AdminGroupClassController;
+use App\Http\Controllers\Admin\AdminProfessorBookController;
+use App\Http\Controllers\Admin\AdminProfessorController;
+use App\Http\Controllers\Admin\AdminProfessorStoryController;
+use App\Http\Controllers\Admin\AdminSliderController;
+use App\Http\Controllers\Admin\AdminWebinarController;
+use App\Http\Controllers\Admin\ConversationController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Api\BlogController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Str;
-use App\Http\Controllers\AdminDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::get('/mt', function () {
     Artisan::Call('migrate', ['--force' => true]);
@@ -56,7 +61,8 @@ Route::get('/optimize', function () {
 //
 //require __DIR__.'/auth.php';
 Route::prefix('admin')->name('admin.')->group(function () {
-    // لیست آزمون‌ها
+    Route::get('/conversations', [ConversationController::class, 'index'])->name('conversations.index');
+    Route::get('/conversations/{id}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
     // فرم ایجاد آزمون
     Route::get('/exams/create', [ExamController::class, 'create'])->name('exams.create');
@@ -64,10 +70,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/exams/{id}', [ExamController::class, 'show'])->name('exams.show');
     Route::post('/exams/{id}/parts', [ExamController::class, 'storePart'])->name('exams.parts.store');
 
+    Route::resource('blogs', AdminBlogsController::class);
+    Route::resource('books', AdminBookController::class);
 
-    // ویرایش بخش
-    Route::put('/exams/{exam}/parts/{part}', [ExamController::class, 'update_part'])
-        ->name('exams.parts.update');
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::put('/exams/{exam}/parts/{part}', [ExamController::class, 'update_part'])->name('exams.parts.update');
+    Route::patch('transactions/{transaction}/status', [UserController::class, 'updateStatus'])->name('transactions.updateStatus');
+    Route::post('/users/{user}/wallet', [UserController::class, 'update'])->name('users.wallet.update');
 
     // حذف بخش
     Route::delete('/exams/{exam}/parts/{part}', [ExamController::class, 'destroy_part'])
@@ -97,5 +107,58 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::delete('/{questionId}', [ExamQuestionController::class, 'destroy'])->name('destroy');
     });
+
+
+    Route::prefix('professors')->name('professors.')->group(function () {
+        Route::get('/', [AdminProfessorController::class, 'index'])->name('index');
+        Route::get('/create', [AdminProfessorController::class, 'create'])->name('create');
+        Route::get('/edit/{id}', [AdminProfessorController::class, 'edit'])->name('edit');
+        Route::post('/store', [AdminProfessorController::class, 'store'])->name('store');
+        Route::get('/{id}', [AdminProfessorController::class, 'show'])->name('show');
+        Route::put('/update/{professor}', [AdminProfessorController::class, 'update'])->name('update');
+
+    });
+    Route::prefix('admin/professors/{professor}')->name('professorsStory.')->group(function () {
+        Route::get('stories', [AdminProfessorStoryController::class, 'index'])->name('index');
+        Route::post('stories', [AdminProfessorStoryController::class, 'store'])->name('store');
+        Route::delete('stories/{story}', [AdminProfessorStoryController::class, 'destroy'])->name('destroy');
+    });
+
+
+    Route::prefix('professorsBook')->name('professorsBook.')->group(function () {
+        Route::get('/{id}', [AdminProfessorBookController::class, 'index'])->name('index');
+        Route::post('/store/{id}', [AdminProfessorBookController::class, 'update'])->name('update');
+
+
+    });
+
+
+    Route::prefix('group_class')->name('group_class.')->group(function () {
+        Route::get('/', [AdminGroupClassController::class, 'index'])->name('index');
+        Route::get('/show/{id}', [AdminGroupClassController::class, 'show'])->name('show');
+        Route::get('/create', [AdminGroupClassController::class, 'create'])->name('create');
+        Route::post('/store', [AdminGroupClassController::class, 'store'])->name('store');
+        Route::get('/edit/{groupClass}', [AdminGroupClassController::class, 'edit'])->name('edit');
+        Route::put('/update/{groupClass}', [AdminGroupClassController::class, 'update'])->name('update');
+        Route::put('/updateSchedule/{schedule}', [AdminGroupClassController::class, 'updateSchedule'])->name('updateSchedule');
+
+
+    });
+    Route::prefix('webinar')->name('webinar.')->group(function () {
+        Route::get('/', [AdminWebinarController::class, 'index'])->name('index');
+        Route::get('/show/{id}', [AdminWebinarController::class, 'show'])->name('show');
+        Route::get('/create', [AdminWebinarController::class, 'create'])->name('create');
+        Route::post('/store', [AdminWebinarController::class, 'store'])->name('store');
+        Route::get('/edit/{webinar}', [AdminWebinarController::class, 'edit'])->name('edit');
+        Route::put('/update/{webinar}', [AdminWebinarController::class, 'update'])->name('update');
+        Route::delete('/webinar/{webinar}', [AdminWebinarController::class, 'destroy'])->name('destroy');
+
+
+    });
+    Route::get('/sliders', [AdminSliderController::class, 'index'])->name('sliders.index');
+    Route::post('/sliders', [AdminSliderController::class, 'store'])->name('sliders.store');
+    Route::delete('/sliders/{id}', [AdminSliderController::class, 'destroy'])->name('sliders.destroy');
+
+
 
 });

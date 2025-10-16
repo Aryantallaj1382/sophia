@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('video_url')->nullable();
             $table->enum('admin_status', ['approved', 'pending', 'rejected'])->default('pending');
             $table->timestamps();
-
             $table->index(['commentable_type', 'commentable_id']);
         });
     }

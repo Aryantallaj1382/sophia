@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Chat\MassageController;
 use App\Http\Controllers\Api\Class\GroupClassController;
 use App\Http\Controllers\Api\Class\PrivateClassController;
 use App\Http\Controllers\Api\Class\WebinarClassController;
+use App\Http\Controllers\Api\Comment\UserCommentController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\Exam\ExamController;
 use App\Http\Controllers\Api\Interest\InterestController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Api\library\BookController;
 use App\Http\Controllers\Api\MainPageController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\Plans\UserPlansController;
+use App\Http\Controllers\Api\Professor\DashboardController;
 use App\Http\Controllers\Api\StudentDashboardController;
 use App\Http\Controllers\Api\Students\StudentController;
 use App\Http\Controllers\Api\Students\WebinarController;
@@ -21,7 +23,7 @@ use App\Http\Controllers\Api\Ticket\TicketController;
 use App\Http\Controllers\Api\Wllet\WalletController;
 use App\Mail\OtpMail;
 
-Route::middleware('frontend.secret')->group(function () {
+//Route::middleware('frontend.secret')->group(function () {
 
 
 Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
@@ -67,7 +69,9 @@ Route::prefix('exam')->controller(ExamController::class)->group(function () {
     });
 });
 
-
+Route::get('/professors_comments/text', [UserCommentController::class, 'professors_comments'])->middleware('optional.auth');
+Route::get('/professors_comments/video', [UserCommentController::class, 'professors_comments_video'])->middleware('optional.auth');
+Route::get('/professors_comments/audio', [UserCommentController::class, 'professors_comments_audio'])->middleware('optional.auth');
 
 Route::get('/getDaySlotsForAll', [App\Http\Controllers\Api\Calender\CalenderController::class, 'getDaySlotsForAll']);
 
@@ -106,7 +110,7 @@ Route::prefix('story')->controller(App\Http\Controllers\Api\Story\StoryControlle
 Route::prefix('class/private')->controller(PrivateClassController::class)->group(function () {
     Route::get('/', 'professors');
     Route::get('/getFilters', 'getFilters');
-    Route::get('/{id}', 'showPrivate');
+    Route::get('/{id}', 'showPrivate')->middleware('optional.auth');;
     Route::get('/times/{id}', 'times');
     Route::get('/details/{id}', 'details');
     Route::get('/details_placement/{id}', 'details_placement');
@@ -123,7 +127,7 @@ Route::prefix('class/private')->controller(PrivateClassController::class)->group
 Route::prefix('class/group')->controller(GroupClassController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/info/{id}', 'info')->middleware('auth:sanctum');
-    Route::get('/{id}', 'show');
+    Route::get('/{id}', 'show')->middleware('optional.auth');;
     Route::post('/store/{id}', 'store')->middleware('auth:sanctum');
     Route::post('/comment/{id}', 'comment')->middleware('auth:sanctum');
     Route::get('/comment/{id}', 'showComments');
@@ -133,7 +137,7 @@ Route::prefix('class/group')->controller(GroupClassController::class)->group(fun
 
 Route::prefix('class/webinar')->controller(WebinarClassController::class)->group(function () {
     Route::get('/', 'index');
-    Route::get('/{id}', 'show');
+    Route::get('/{id}', 'show')->middleware('optional.auth');
     Route::get('/info/{id}', 'info')->middleware('auth:sanctum');
     Route::post('/comment/{id}', 'comment')->middleware('auth:sanctum');
     Route::get('/comment/{id}', 'showComments');
@@ -236,10 +240,11 @@ Route::prefix('student')->middleware('auth:sanctum')->controller(StudentControll
         Route::post('/close/{id}', 'closeTicket');
 
     });
-    Route::prefix('comment')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Comment\UserCommentController::class)->group(function () {
+    Route::prefix('comment')->middleware('auth:sanctum')->controller(UserCommentController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/update/{id}', 'update');
         Route::delete('/delete/{id}', 'delete');
+
     });
     Route::prefix('calender')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Calender\PanelCalenderController::class)->group(function () {
         Route::get('/monthly', 'monthlyCalendar');
@@ -247,6 +252,7 @@ Route::prefix('student')->middleware('auth:sanctum')->controller(StudentControll
         Route::get('/daily', 'dailyCalendar');
 
     });
+
     Route::prefix('exam')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Students\ExamStudentController::class)->group(function () {
         Route::get('/', 'index');
         Route::get('/show/{id}', 'show');
@@ -283,6 +289,15 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
     Route::prefix('notification')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Notification\NotificationController::class)->group(function () {
         Route::get('/', 'index');
     });
+    Route::prefix('calender')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Calender\ProfessorPanelCalenderController::class)->group(function () {
+        Route::get('/monthly', 'monthlyCalendar');
+        Route::get('/weekly', 'weeklyCalendar');
+        Route::get('/daily', 'dailyCalendar');
+
+    });
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
 });
-});
+
+
+//});

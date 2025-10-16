@@ -23,7 +23,7 @@ class OtpMail extends Mailable
 
     public function build()
     {
-        return $this->subject('کد تایید شما')
+        return $this->subject('Your Verification Code')
             ->view('email.otp'); // view ایمیل
     }
 }

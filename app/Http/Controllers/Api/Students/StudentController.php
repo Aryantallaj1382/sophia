@@ -105,7 +105,7 @@ class StudentController extends Controller
             })
             ->values()
             ->toArray();
-        return api_response($learningGoals);
+        return api_response(['data'=>$learningGoals]);
 
 
     }

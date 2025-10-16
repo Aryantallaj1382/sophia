@@ -22,7 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'wants_json' => JsonMiddleware::class,
             'frontend.secret' => \App\Http\Middleware\FrontendSecret::class, // 👈 درستش اینه
 
-        ]);    })
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

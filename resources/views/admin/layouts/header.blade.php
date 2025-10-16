@@ -1,0 +1,44 @@
+<header class="bg-white border-b shadow-sm px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+    {{-- لوگو یا عنوان --}}
+    <div class="flex items-center gap-3">
+        <button id="sidebarToggle" class="md:hidden text-gray-600 hover:text-blue-600 transition">
+            <span class="material-icons text-2xl">menu</span>
+        </button>
+        <h1 class="text-xl font-bold text-gray-700">پنل مدیریت</h1>
+    </div>
+
+    {{-- نوار ابزار سمت راست --}}
+    <div class="flex items-center gap-6">
+        {{-- نوتیفیکیشن --}}
+        <div class="relative">
+            <button class="relative text-gray-600 hover:text-blue-600 transition">
+                <!-- Heroicon Bell -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14V11a6 6 0 10-12 0v3c0 .386-.149.735-.395 1.003L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+
+                <!-- تعداد اعلان‌ها -->
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">3</span>
+            </button>
+        </div>
+
+
+        {{-- پروفایل --}}
+        <div class="relative group">
+            <button class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&size=50"
+                     alt="Admin" class="w-12 h-12 rounded-full border">
+            </button>
+            {{-- منوی پروفایل --}}
+            <div class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md hidden group-hover:block">
+                <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">پروفایل</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">تنظیمات</a>
+                <form method="POST" action="#">
+                    @csrf
+                    <button class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100">خروج</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>

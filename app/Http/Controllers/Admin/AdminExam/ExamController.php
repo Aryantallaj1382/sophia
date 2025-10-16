@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\AdminExam;
+namespace App\Http\Controllers\Admin\AdminExam;
 
 use App\Http\Controllers\Controller;
 use App\Models\AgeGroup;
@@ -9,7 +9,6 @@ use App\Models\Exam;
 use App\Models\ExamPart;
 use App\Models\ExamPartMedia;
 use App\Models\ExamPartType;
-use App\Models\ExamStudent;
 use App\Models\LanguageLevel;
 use App\Models\Skill;
 use Illuminate\Http\Request;

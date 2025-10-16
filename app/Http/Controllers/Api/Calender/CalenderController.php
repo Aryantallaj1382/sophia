@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Calender;
 
 use App\Http\Controllers\Controller;
 use App\Models\Professor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,19 +14,20 @@ class CalenderController extends Controller
     {
         $date = $request->input('date'); // مثال: 2025-08-30
 
-        // کش کردن تایم‌های نیم‌ساعته روز (48 تایم)
-        $allDayTimes = Cache::rememberForever('half_hour_times', function () {
+        $allDayTimes = Cache::rememberForever('half_hour_times_8am_', function () {
             $times = [];
-            $start = \Carbon\Carbon::parse('00:00');
-            $end = \Carbon\Carbon::parse('24:00');
+
+            $start = Carbon::today()->setHour(8)->setMinute(0)->setSecond(0);
+            $end = $start->copy()->addDay()->setHour(8)->setMinute(0)->setSecond(0);
 
             while ($start < $end) {
                 $slotStart = $start->copy();
-                $slotEnd = $start->copy()->addMinutes(30);
+                $slotEnd = $start->copy()->addMinutes(25);
 
                 $times[] = [
                     'time' => $slotStart->format('H:i') . ' - ' . $slotEnd->format('H:i'),
                 ];
+
 
                 $start->addMinutes(30);
             }

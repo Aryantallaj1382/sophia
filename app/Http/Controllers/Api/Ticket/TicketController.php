@@ -123,7 +123,7 @@ class TicketController extends Controller
                     'is_support_reply' => $message->is_support_reply,
                     'message' => $message->message ?? null,
                     'file' => $message->file ? asset( $message->file) : null,
-                    'sent_at' => $message->created_at->format('Y-m-d H:i'),
+                    'sent_at' => $message->created_at?->format('Y-m-d H:i'),
                 ];
             }),
         ]);

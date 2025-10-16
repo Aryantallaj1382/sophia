@@ -141,14 +141,14 @@ class WebinarClassController extends Controller
 
         if ($like) {
             $like->delete();
-            return api_response([], 'لایک حذف شد');
+            return api_response(['is_like' => false], 'لایک حذف شد');
         }
 
         $group->likes()->create([
             'user_id' => $user->id,
         ]);
 
-        return api_response([], 'لایک شد');
+        return api_response(['is_like' => true], 'لایک شد');
     }
 
     public function comment(Request $request, $id)
@@ -175,16 +175,33 @@ class WebinarClassController extends Controller
         $videoUrl = null;
         $voiceUrl = null;
 
-        // ذخیره فایل ویدیو
+
         if ($request->hasFile('video_url')) {
-            $videoPath = $request->file('video_url')->store('comment/videos', 'public');
-            $videoUrl = $videoPath;
+            $file = $request->file('video_url');
+
+            // مسیر در public اصلی
+            $destinationPath = public_path('comment/video'); // public/comment/voices
+            $fileName = time() . '_' . $file->getClientOriginalName();
+
+            // انتقال فایل به مسیر
+            $file->move($destinationPath, $fileName);
+
+            $videoUrl = 'comment/video/' . $fileName; // مسیر برای ذخیره در دیتابیس یا ارسال به کلاینت
         }
+
 
         // ذخیره فایل صدا
         if ($request->hasFile('voice_url')) {
-            $voicePath = $request->file('voice_url')->store('comment/voices', 'public');
-            $voiceUrl = $voicePath;
+            $file = $request->file('voice_url');
+
+            // مسیر در public اصلی
+            $destinationPath = public_path('comment/voices'); // public/comment/voices
+            $fileName = time() . '_' . $file->getClientOriginalName();
+
+            // انتقال فایل به مسیر
+            $file->move($destinationPath, $fileName);
+
+            $voiceUrl = 'comment/voices/' . $fileName; // مسیر برای ذخیره در دیتابیس یا ارسال به کلاینت
         }
 
         // ساخت نظر
@@ -201,7 +218,7 @@ class WebinarClassController extends Controller
             'video_url' => $videoUrl ? asset($videoUrl) : null,
             'voice_url' => $voiceUrl ? asset($voiceUrl) : null,
             'created_at' => $comment->created_at->diffForHumans(),
-        ], 'نظر با موفقیت ثبت شد');
+        ], 'successes');
     }
 
     public function showComments(Request $request, $id)
@@ -274,7 +291,7 @@ class WebinarClassController extends Controller
 
         $classGroup = Webinar::findOrFail($id);
 
-        $existingRating = $user->ratings()
+        $existingRating = $classGroup->ratings()
             ->where('ratable_id', $classGroup->id)
             ->where('ratable_type', Webinar::class)
             ->where('user_id', $user->id)

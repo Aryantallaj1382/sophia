@@ -19,7 +19,8 @@ class ExamPartMedia extends Model
     }
     public function getPathAttribute($value)
     {
-        return $value? url("storage/$value") : null;
+        return $value? url("public/storage/$value") : null;
 
     }
 }
+

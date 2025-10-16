@@ -24,7 +24,7 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($request->password, $user->password)) {
             return api_response([],'email or password is wrong' , 400);
         }
-//        $user->tokens()->delete();
+        $user->tokens()->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return api_response([

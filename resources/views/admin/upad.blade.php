@@ -64,7 +64,7 @@
             <div class="w-36 flex justify-center items-center">
                 <i class="bi bi-bootstrap text-4xl text-blue-600"></i>
             </div>
-            @include('admin.sitebar')
+            @include('admin.sidebar')
         </div>
 
         <!-- Content Area -->

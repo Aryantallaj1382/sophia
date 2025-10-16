@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\AdminExam;
+namespace App\Http\Controllers\Admin\AdminExam;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExamPart;

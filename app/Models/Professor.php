@@ -12,7 +12,11 @@ class Professor extends Model
     {
         return $this->hasMany(ProfessorLearningGoal::class);
     }
+    public function story()
+    {
 
+        return $this->hasMany(Story::class);
+    }
     public function books()
     {
         return $this->belongsToMany(Book::class, 'book_professor');

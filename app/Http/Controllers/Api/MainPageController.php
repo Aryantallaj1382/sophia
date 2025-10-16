@@ -14,10 +14,12 @@ class MainPageController extends Controller
     public function index()
     {
 
+
         $story = Story::latest()->take(20)->get()->map(function ($story) {
             return [
                 'id' => $story->id,
                 'cover' => $story->cover_image,
+
             ];
         });
         $slider = Slider::latest()->take(8)->get()->map(function ($slider) {
