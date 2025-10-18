@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\MainPageController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\Plans\UserPlansController;
 use App\Http\Controllers\Api\Professor\DashboardController;
+use App\Http\Controllers\Api\Professor\ProfessorController;
+use App\Http\Controllers\Api\Professor\ProfessorWebinarController;
 use App\Http\Controllers\Api\StudentDashboardController;
 use App\Http\Controllers\Api\Students\StudentController;
 use App\Http\Controllers\Api\Students\WebinarController;
@@ -280,7 +282,7 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
         Route::post('/close/{id}', 'closeTicket');
 
     });
-    Route::prefix('information')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Professor\ProfessorController::class)->group(function () {
+    Route::prefix('information')->middleware('auth:sanctum')->controller(ProfessorController::class)->group(function () {
         Route::get('/', 'showPrivate');
     });
     Route::prefix('books')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Professor\ProfessorLibreryController::class)->group(function () {
@@ -296,8 +298,39 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
 
     });
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/get_user', [ProfessorController::class, 'get_user']);
 
+
+    Route::prefix('private')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Professor\ProfessorPrivateClassController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/cancel/{id}', 'cancel');
+        Route::get('/information/{id}', 'information');
+        Route::get('/sessions/{id}', 'sessions');
+        Route::get('/calender/{id}', 'calender');
+        Route::get('/new_class/{id}', 'new_class');
+        Route::post('/report', 'report');
+
+    });
+    Route::prefix('group')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Students\GroupClassController::class)->group(function () {
+        Route::get('/', 'index');
+//        Route::post('/cancel/{id}', 'cancel');
+        Route::get('/information/{id}', 'information');
+        Route::get('/sessions/{id}', 'sessions');
+        Route::get('/calender/{id}', 'calender');
+        Route::get('/new_class/{id}', 'new_class');
+//
+    });
+
+    Route::prefix('webinar')->middleware('auth:sanctum')->controller(ProfessorWebinarController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/information/{id}', 'information');
+        Route::get('/new_class/{id}', 'new_class');
+
+
+    });
 });
+
+
 
 
 //});

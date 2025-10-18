@@ -56,7 +56,7 @@ class ProfessorController extends Controller
         $story = Story::where('professor_id', $professor->id)->get()->map(function ($item) {
             return [
                 'id' => $item->id,
-                'image' => $item->cover_image,
+                'cover' => $item->cover_image,
                 'like_count' => $item->likes()->count(),
                 'comment_count' => $item->comments()->count(),
 
@@ -116,6 +116,17 @@ class ProfessorController extends Controller
         ];
 
         return api_response($return);
+
+    }
+    public function get_user()
+    {
+        $user = auth()->user();
+
+        return api_response([
+            'balance' => $user->wallet->balance,
+            'name' => $user->professor->name,
+            'profile' => $user->profile,
+        ]);
 
     }
 }

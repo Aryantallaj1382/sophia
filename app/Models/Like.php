@@ -18,7 +18,8 @@ class Like extends Model
     }
 
     /**
-     * ارتباط با کاربر.
+     * ا
+     * رتباط با کاربر.
      */
     public function user() : BelongsTo
     {

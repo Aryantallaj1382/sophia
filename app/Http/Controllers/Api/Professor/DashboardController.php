@@ -16,7 +16,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $professor = auth()->user();
+        $professor = auth()->user()->professor;
         $trial = PrivateClassReservation::where('professor_id' , $professor->id)->where('class_type' ,'trial')->count();
         $sessional = PrivateClassReservation::where('professor_id' , $professor->id)->where('class_type' ,'sessional')->count();
         $placement = PrivateClassReservation::where('professor_id' , $professor->id)->where('class_type' ,'placement')->count();

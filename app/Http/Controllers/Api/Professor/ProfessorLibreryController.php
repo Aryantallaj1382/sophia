@@ -13,10 +13,7 @@ class ProfessorLibreryController extends Controller
         $userId = auth()->id();
 
         $professor = Professor::where('user_id', $userId)->firstOrFail();
-
         $books = $professor->books()->paginate();
-
-        // تغییر ساختار خروجی
         $books->getCollection()->transform(function ($item) {
             return [
                 'id' => $item->id,
