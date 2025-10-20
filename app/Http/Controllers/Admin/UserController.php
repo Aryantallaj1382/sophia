@@ -66,4 +66,12 @@ class UserController extends Controller
 
         return back()->with('success', 'تراکنش با موفقیت ثبت شد.');
     }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->back()->with('success', 'کاربر با موفقیت حذف شد.');
+    }
+
 }

@@ -27,4 +27,9 @@ class ReportHomeWork extends Model
     {
         return $this->belongsTo(ReportRegistration::class, 'report_registration_id');
     }
+    public function getAnswerAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+
+    }
 }

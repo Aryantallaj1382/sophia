@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Story extends Model
 {
-    protected $fillable = ['cover_image', 'video' , 'professor_id'];
+    protected $fillable = ['cover_image', 'video' , 'professor_id', 'main_page'];
     public function getCoverImageAttribute($value)
     {
 

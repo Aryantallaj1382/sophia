@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Models\AgeGroup;
 use App\Models\Book;
 use App\Models\GroupClass;
+use App\Models\GroupClassReservation;
 use App\Models\Language;
 use App\Models\LanguageLevel;
 use App\Models\LearningSubgoal;
 use App\Models\Platform;
 use App\Models\Professor;
 use App\Models\Webinar;
+use App\Models\WebinarReservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -126,5 +128,15 @@ class AdminWebinarController extends Collection
     {
         $webinar->delete();
         return redirect()->route('admin.webinar.index')->with('success', 'وبینار حذف شد');
+    }
+
+    public function groupClassReservations($id)
+    {
+        $reservations = WebinarReservation::with('user') // رابطه با دانش‌آموز
+        ->where('webinar_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.webinar.reservations', compact('reservations'));
     }
 }

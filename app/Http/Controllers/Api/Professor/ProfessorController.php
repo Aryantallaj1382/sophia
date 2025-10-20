@@ -123,9 +123,11 @@ class ProfessorController extends Controller
         $user = auth()->user();
 
         return api_response([
-            'balance' => $user->wallet->balance,
-            'name' => $user->professor->name,
+            'balance' => $user?->wallet?->balance,
+            'name' => $user?->professor?->name,
             'profile' => $user->profile,
+            'user_id' => $user->id,
+            'id' => $user->professor?->id,
         ]);
 
     }

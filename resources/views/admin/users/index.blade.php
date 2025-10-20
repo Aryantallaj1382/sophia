@@ -25,10 +25,29 @@
                         <td class="text-center px-4 py-2">{{ $user->email }}</td>
                         <td class="text-center px-4 py-2">{{ $user->created_at?->format('Y/m/d') }}</td>
                         <td class="text-center px-4 py-2">
-                            <a href="{{ route('admin.users.show', $user->id) }}" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                👁 مشاهده
-                            </a>
+                            <div class="flex items-center justify-center gap-2">
+                                <!-- دکمه مشاهده -->
+                                <a href="{{ route('admin.users.show', $user->id) }}"
+                                   class="inline-flex items-center gap-1 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200
+                  px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
+                                    👁 مشاهده
+                                </a>
+
+                                <!-- دکمه حذف -->
+                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                      onsubmit="return confirm('آیا از حذف این کاربر مطمئن هستید؟');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="inline-flex items-center gap-1 text-red-600 bg-red-50 hover:bg-red-100 border border-red-200
+                           px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
+                                        🗑 حذف
+                                    </button>
+                                </form>
+                            </div>
                         </td>
+
+
                     </tr>
                 @endforeach
                 </tbody>

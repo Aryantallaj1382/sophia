@@ -7,6 +7,7 @@ use App\Models\GroupClass;
 use App\Models\GroupClassReservation;
 use App\Models\PrivateClassReservation;
 use App\Models\PrivateProfessorTimeSlot;
+use App\Models\ReportHomeWork;
 use App\Models\Story;
 use App\Models\Webinar;
 use App\Models\WebinarReservation;
@@ -22,7 +23,6 @@ class DashboardController extends Controller
         $placement = PrivateClassReservation::where('professor_id' , $professor->id)->where('class_type' ,'placement')->count();
         $group = GroupClass::where('professor_id' , $professor->id)->count();
         $webinar = Webinar::where('professor_id' , $professor->id)->count();
-        $story = Story::where('professor_id' , $professor->id)->get();
 
         $private = PrivateProfessorTimeSlot::whereRelation('reservation','professor_id' , $professor->id)->whereRelation('reservation','status' ,'!=', 'pending')
             ->whereDate('date', '>', now())->oldest()->take(3)->get()->map(function ($slot) {
@@ -89,16 +89,32 @@ class DashboardController extends Controller
                 ];
             });
 
+        $homeworks = ReportHomeWork::whereHas('registration.classReservation', function ($query) use ($professor) {
+            $query->where('professor_id', $professor->id);
+        })
+            ->with(['registration.classReservation.user']) // بارگذاری رابطه‌ی student همزمان
+            ->get()
+            ->map(function ($homework) {
+                return [
+                    'id' => $homework->id,
+                    'answer' =>  $homework->answer,
+                    'status' =>  $homework->status,
+                    'is_reading' =>  $homework->is_reading,
+                    'created_at' =>  $homework->created_at?->format('d M')?? null,
+                    'student' => $homework->registration?->classReservation?->user?->name,
+                    'class' => $homework->registration?->classReservation?->subgoal?->title,
+                ];
+            });
         return api_response([
             'trial' => $trial,
             'placement' => $placement,
             'sessional' => $sessional,
             'group' => $group,
             'webinar' => $webinar,
-            'story' => $story,
             'private' => $private,
             'webinar_reserve' => $webinar_reserve,
             'group_reserve' => $group_reserve,
+            'homeworks' => $homeworks,
 
             ]);
 

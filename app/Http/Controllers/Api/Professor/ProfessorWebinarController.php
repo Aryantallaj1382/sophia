@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Professor;
 use App\Models\Certificate;
 use App\Models\Webinar;
 use App\Models\WebinarReservation;
+use Carbon\Carbon;
 
 class ProfessorWebinarController
 {
@@ -33,8 +34,10 @@ class ProfessorWebinarController
     public function new_class($id)
     {
         $webinar = Webinar::find($id);
-        $certificate = Certificate::where('for' , 'webinar')->where('for_id', $id)->exists();
-        $certificate_file = Certificate::where('for' , 'webinar')->where('for_id', $id)->first();
+        $now = Carbon::now();
+        $classDateTime = Carbon::parse($webinar->date->format('Y-m-d') . ' ' . $webinar->time->format('H:i'));
+        $isFinished = $classDateTime->lt($now); // اگر کمتر از الان بود یعنی گذشته
+
         $a = [
             'link' =>$webinar->class_link ?? null,
             'professor_id' => $webinar->professor->user->id ?? null,
@@ -42,8 +45,9 @@ class ProfessorWebinarController
             'subgoal' => $webinar->subject->goal->title . ' (' . $webinar->subject->title . ')',
             'date' => $webinar->date->format('j F') ,
             'time' =>$webinar->time->format('H:i') ,
-            'has_certificate' => $certificate,
             'certificate_file' => $certificate_file->file ?? null,
+            'is_finished' => $isFinished,
+
         ];
 
         return api_response($a);

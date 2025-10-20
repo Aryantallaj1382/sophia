@@ -11,29 +11,7 @@ class ReportRegistration extends Model
 
     protected $table = 'report_registration';
 
-    protected $fillable = [
-        'absence',
-        'absence_time',
-        'exam',
-        'writing',
-        'speaking',
-        'reading',
-        'listening',
-        'vocabulary',
-        'final_score',
-        'grammar',
-        'student_status',
-        'exam_solutions',
-        'strengths',
-        'weaknesses',
-        'solutions',
-        'score',
-        'private_professor_time_slot',
-        'class_id',
-        'skills',
-        'exam_part',
-        'exam_name',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'exam' => 'boolean',

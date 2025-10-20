@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\SimpleMessage;
+use App\Events\UserTyping;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\Certificate\CertificateController;
@@ -24,9 +26,13 @@ use App\Http\Controllers\Api\Students\WebinarController;
 use App\Http\Controllers\Api\Ticket\TicketController;
 use App\Http\Controllers\Api\Wllet\WalletController;
 use App\Mail\OtpMail;
+use Illuminate\Http\Request;
 
 //Route::middleware('frontend.secret')->group(function () {
-
+Route::get('/fire-test', function () {
+    event(new \App\Events\TestEvent('🚀 Hello WebSocket!'));
+    return '✅ Event Fired!';
+});
 
 Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
     Route::get('/messages/{receiverId}', [MassageController::class, 'getMessagesWithUser']);
@@ -35,7 +41,7 @@ Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
     Route::post('/send-message/{receiverId}', [MassageController::class, 'sendMessage']);
 });
 
-Route::get('/chat/user-details/{id}', [MassageController::class, 'user_details']);
+Route::get('/chat/user_details/{id}', [MassageController::class, 'user_details']);
 Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])->middleware('auth:sanctum');
 Route::get('/student/home_work', [StudentDashboardController::class, 'home_work'])->middleware('auth:sanctum');
 
@@ -80,7 +86,7 @@ Route::get('/getDaySlotsForAll', [App\Http\Controllers\Api\Calender\CalenderCont
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
     Route::post('/loginOtp', 'loginOtp');
-    Route::post('/sendOtp', [\App\Http\Controllers\Api\Auth\SmsController::class,'sendOtp']);
+    Route::post('/sendOtp', [\App\Http\Controllers\Api\Auth\SmsController::class, 'sendOtp']);
     Route::post('/register', 'register');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
 });
@@ -204,7 +210,6 @@ Route::prefix('student')->middleware('auth:sanctum')->controller(StudentControll
     });
 
 
-
     Route::prefix('group')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Students\GroupClassController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/cancel/{id}', 'cancel');
@@ -309,8 +314,10 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
         Route::get('/calender/{id}', 'calender');
         Route::get('/new_class/{id}', 'new_class');
         Route::post('/report', 'report');
+        Route::get('/report/{id}', 'report_show');
 
     });
+
     Route::prefix('group')->middleware('auth:sanctum')->controller(\App\Http\Controllers\Api\Students\GroupClassController::class)->group(function () {
         Route::get('/', 'index');
 //        Route::post('/cancel/{id}', 'cancel');
@@ -329,8 +336,14 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
 
     });
 });
-
-
+Route::post('/chat/typing/{user1Id}/{user2Id}', function ($user1Id, $user2Id) {
+    $user = auth('sanctum')->user(); // یا auth('sanctum')->user() اگر از Sanctum استفاده می‌کنید
+    if (!$user) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    event(new UserTyping($user->id, $user1Id, $user2Id));
+    return response()->json(['status' => 'success']);
+})->middleware('auth:sanctum'); // یا middleware مورد نظر شما
 
 
 //});

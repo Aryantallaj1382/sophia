@@ -15,7 +15,7 @@ class MainPageController extends Controller
     {
 
 
-        $story = Story::latest()->take(20)->get()->map(function ($story) {
+        $story = Story::where('main_page' , true)->latest()->take(20)->get()->map(function ($story) {
             return [
                 'id' => $story->id,
                 'cover' => $story->cover_image,

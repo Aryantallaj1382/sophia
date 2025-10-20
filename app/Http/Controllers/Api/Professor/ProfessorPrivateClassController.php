@@ -25,9 +25,9 @@ class ProfessorPrivateClassController extends Controller
 
             return [
                 'id' => $item->id,
-                'professor_id' => $item->professor_id,
-                'professor_name' => $item->professor->name,
-                'professor_profile' => $item->professor->user->profile,
+                'professor_id' => $item->user->id,
+                'professor_name' => $item->user->name,
+                'professor_profile' => $item->user->profile,
                 'subgoal' => $item->subgoal->goal->title . ' (' . $item->subgoal->title . ')',
                 'date' => $item->timeSlots()
                     ->where('date', '>=', now()->toDateString())
@@ -122,7 +122,9 @@ class ProfessorPrivateClassController extends Controller
             ->sortBy('session_number')
             ->values()
             ->map(function ($item) use ($link, $professor_id) {
+                $is_report = ReportRegistration::where('private_professor_time_slot', $item->id)->exists();
                 return [
+
                     'id' => $item->id,
                     'session_number' => $item->session_number,
                     'date' => $item->date->format('D ,j M Y'),
@@ -136,6 +138,7 @@ class ProfessorPrivateClassController extends Controller
                     'cancel_reason' => $item->cancel_reason,
                     'cancel_reason_file' => $item->cancel_reason_file,
                     'refund' => $item->refund,
+                    'is_report' => $is_report,
                 ];
             })
             ->toArray();
@@ -205,7 +208,7 @@ class ProfessorPrivateClassController extends Controller
         $validated = $request->validate([
             'private_professor_time_slot' => 'required',
             'absence' => 'required|in:absence,presence,delay',
-            'absence_time' => 'nullable|string',
+            'absence_time' => 'nullable',
             'exam' => 'nullable|boolean',
             'speaking' => 'nullable|integer',
             'writing' => 'nullable|integer',
@@ -225,51 +228,88 @@ class ProfessorPrivateClassController extends Controller
             'exam_part' => 'nullable|array',
             'class_id' => 'required',
             'report_home_work' => 'nullable|array',
-            'report_home_work.*.title' => 'required|string',
-            'report_home_work.*.answer' => 'required|string',
+            'report_home_work.*.title' => 'nullable|string',
             'report_home_work.*.is_reading' => 'nullable',
-            'report_home_work.*.status' => 'nullable|in:yes,no',
         ]);
 
-        $report = ReportRegistration::create([
+        $report = ReportRegistration::updateOrCreate([
+            'private_professor_time_slot' => $request->private_professor_time_slot,
+        ],[
             'absence' => $validated['absence'],
             'absence_time' => $validated['absence_time'] ??null,
-            'exam' => $validated['exam'] ?? false,
             'writing' => $validated['writing'] ?? null,
-            'speaking' => $validated['speaking_score'] ?? null,
+            'speaking' => $validated['speaking'] ?? null,
             'class_id' => $validated['class_id'],
             'reading' => $validated['reading'] ?? null,
             'listening' => $validated['listening'] ?? null,
             'vocabulary' => $validated['vocabulary'] ?? null,
-            'final_score' => $validated['final_score'] ?? null,
             'grammar' => $validated['grammar'] ?? null,
             'student_status' => $validated['student_status'] ?? null,
-            'exam_solutions' => $validated['exam_solutions'] ?? null,
             'strengths' => $validated['strengths'] ?? null,
             'weaknesses' => $validated['weaknesses'] ?? null,
             'solutions' => $validated['solutions'] ?? null,
-            'score' => $validated['score'] ?? null,
-            'skills' => $validated['skills'] ?? null,
-            'exam_part' => $validated['exam_part'] ?? null,
             'private_professor_time_slot' => $validated['private_professor_time_slot'],
         ]);
 
         if (!empty($validated['report_home_work'])) {
+            // حذف همه رکوردهای قدیمی مرتبط با این گزارش
+            ReportHomeWork::where('report_registration_id', $report->id)->delete();
+
+            // ذخیره رکوردهای جدید
             foreach ($validated['report_home_work'] as $homework) {
                 ReportHomeWork::create([
                     'title' => $homework['title'],
-                    'answer' => $homework['answer'],
-                    'status' => $homework['status'] ?? null,
                     'is_reading' => $homework['is_reading'] ?? null,
                     'report_registration_id' => $report->id,
                 ]);
             }
         }
 
-        return response()->json([
-            'message' => 'گزارش با موفقیت ثبت شد.',
-            'data' => $report
-        ]);
+        if ($validated['absence'] == 'absence') {
+            $slot = PrivateProfessorTimeSlot::find($validated['private_professor_time_slot']);
+            $slot->update([
+                'status' => 'Absent'
+            ]);
+        }
+        if ($validated['absence'] == 'presence') {
+            $slot = PrivateProfessorTimeSlot::find($validated['private_professor_time_slot']);
+            $slot->update([
+                'status' => 'Finished'
+            ]);
+        }
+        if ($validated['absence'] == 'delay') {
+            $slot = PrivateProfessorTimeSlot::find($validated['private_professor_time_slot']);
+            $slot->update([
+                'status' => 'Finished'
+            ]);
+        }
+
+
+        return api_response([],'success');
+    }
+    public function report_show($id)
+    {
+        $report = ReportRegistration::where('private_professor_time_slot' , $id)->first();
+
+        $reports = [
+
+            'absence' => $report->absence ?? null,
+            'absence_time' => $report->absence_time ??null,
+            'writing' => $report->writing ?? null,
+            'speaking' => $report->speaking ?? null,
+            'class_id' => $report->class_id ??null,
+            'reading' => $report->reading ?? null,
+            'listening' => $report->listening ?? null,
+            'vocabulary' => $report->vocabulary ?? null,
+            'grammar' => $report->grammar ?? null,
+            'strengths' => $report->strengths ??  [],
+            'weaknesses' => $report->weaknesses ??  [],
+            'solutions' => $report->solutions ??  [],
+            'report_home_work' => $report->homeWorks ?? [],
+            'private_professor_time_slot' => $report->private_professor_time_slot ?? null,
+        ];
+        return api_response($reports);
+
     }
 
 

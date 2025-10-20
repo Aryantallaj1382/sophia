@@ -227,7 +227,7 @@ class PrivateClassController extends Controller
                     'home_work' => $firstHomeWork ? [
                         'id' => $firstHomeWork->id,
                         'title' => $firstHomeWork->title,
-                        'answer' => $firstHomeWork->answer ? url("public/".$firstHomeWork->answer) : null,
+                        'answer' => $firstHomeWork->answer,
                         'is_reading' => (int)$firstHomeWork->is_reading,
                         'status' => $firstHomeWork->status,
                     ] : null,
@@ -329,7 +329,6 @@ class PrivateClassController extends Controller
         return api_response(['data' => $report]);
     }
 
-
     public function report_table($id)
     {
         $user = auth()->user();
@@ -337,7 +336,7 @@ class PrivateClassController extends Controller
 
         $report = $class->timeSlots
             ->map(function ($item) {
-                $firstRegistration = $item->registrations->first(); // اولین ثبت‌نام هر جلسه
+                $firstRegistration = $item->registrations->first();
 
                 return [
                     'session_number' => $item->session_number,
@@ -346,13 +345,17 @@ class PrivateClassController extends Controller
                     'time' => $firstRegistration?->created_at?->format('H:i'),
                     'origin_date' => $firstRegistration?->created_at?->toDateTimeString(),
                     'score' => $firstRegistration?->final_score,
+                    'absence' => $firstRegistration?->absence,
                 ];
             })
-            ->filter(fn($row) => !is_null($row['score'])) // فقط جلساتی که گزارش دارن
-            ->values(); // ایندکس‌گذاری مجدد
+            ->filter(fn($row) => !is_null($row['absence']))
+            ->values();
 
-        return api_response($report);
+        return response()->json([
+
+        ]); // بدون []
     }
+
 
     public function delay($id)
     {
@@ -382,20 +385,22 @@ class PrivateClassController extends Controller
 
         $absent = $allRegistrations->where('absence', 'absence')->count();
         $no_absent = $allRegistrations->where('absence', '!=', 'absence')->count();
+        $all = $allRegistrations->count();
         return api_response([
             'data' => $report,
             'absent' => $absent,
             'no_absent' => $no_absent,
+            'all' => $all,
         ]);
     }
 
     public function activity($id)
     {
-        $class = ReportRegistration::find($id);
+        $class =ReportRegistration::where('private_professor_time_slot' , $id)->first();
         $return = [
-            'strengths' => $class->strengths,
-            'weaknesses' => $class->weaknesses,
-            'solutions' => $class->solutions,
+            'strengths' => $class->strengths ?? null,
+            'weaknesses' => $class->weaknesses?? null,
+            'solutions' => $class->solutions?? null,
             'writing' => $class->writing ?? 0,
             'speaking' => $class->speaking?? 0,
             'reading' => $class->reading?? 0,

@@ -1,23 +1,26 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminBlogsController;
 use App\Http\Controllers\Admin\AdminBookController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminExam\ExamController;
 use App\Http\Controllers\Admin\AdminExam\ExamQuestionController;
 use App\Http\Controllers\Admin\AdminGroupClassController;
+use App\Http\Controllers\Admin\AdminPlanController;
+use App\Http\Controllers\Admin\AdminPrivateClassListController;
 use App\Http\Controllers\Admin\AdminProfessorBookController;
 use App\Http\Controllers\Admin\AdminProfessorController;
 use App\Http\Controllers\Admin\AdminProfessorStoryController;
 use App\Http\Controllers\Admin\AdminSliderController;
+use App\Http\Controllers\Admin\AdminStoryController;
 use App\Http\Controllers\Admin\AdminWebinarController;
 use App\Http\Controllers\Admin\ConversationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\BlogController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+
 
 Route::get('/mt', function () {
     Artisan::Call('migrate', ['--force' => true]);
@@ -60,7 +63,21 @@ Route::get('/optimize', function () {
 //});
 //
 //require __DIR__.'/auth.php';
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware('guest:web')->group(function() {
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+});
+Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('welcome');
+
+    Route::delete('/stories/{story}', [AdminStoryController::class, 'destroy'])->name('stories.destroy');
+
+    Route::get('/stories/main-page', [AdminStoryController::class, 'mainPageStories'])->name('stories.main');
+    Route::get('/stories/create', [AdminStoryController::class, 'create'])->name('stories.create');
+    Route::post('/stories', [AdminStoryController::class, 'store'])->name('stories.store');
+
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
     Route::get('/conversations', [ConversationController::class, 'index'])->name('conversations.index');
     Route::get('/conversations/{id}', [ConversationController::class, 'show'])->name('conversations.show');
     Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
@@ -72,12 +89,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('blogs', AdminBlogsController::class);
     Route::resource('books', AdminBookController::class);
+    Route::resource('plans', AdminPlanController::class);
+    Route::get('Plans/{plan}/users', [AdminPlanController::class, 'users'])->name('plans.users');
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
     Route::put('/exams/{exam}/parts/{part}', [ExamController::class, 'update_part'])->name('exams.parts.update');
     Route::patch('transactions/{transaction}/status', [UserController::class, 'updateStatus'])->name('transactions.updateStatus');
     Route::post('/users/{user}/wallet', [UserController::class, 'update'])->name('users.wallet.update');
+    Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 
     // حذف بخش
     Route::delete('/exams/{exam}/parts/{part}', [ExamController::class, 'destroy_part'])
@@ -135,6 +155,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::prefix('group_class')->name('group_class.')->group(function () {
         Route::get('/', [AdminGroupClassController::class, 'index'])->name('index');
+        Route::get('/groupClassReservations/{id}', [AdminGroupClassController::class, 'groupClassReservations'])->name('groupClassReservations');
         Route::get('/show/{id}', [AdminGroupClassController::class, 'show'])->name('show');
         Route::get('/create', [AdminGroupClassController::class, 'create'])->name('create');
         Route::post('/store', [AdminGroupClassController::class, 'store'])->name('store');
@@ -147,6 +168,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::prefix('webinar')->name('webinar.')->group(function () {
         Route::get('/', [AdminWebinarController::class, 'index'])->name('index');
         Route::get('/show/{id}', [AdminWebinarController::class, 'show'])->name('show');
+        Route::get('/groupClassReservations/{id}', [AdminWebinarController::class, 'groupClassReservations'])->name('groupClassReservations');
+
         Route::get('/create', [AdminWebinarController::class, 'create'])->name('create');
         Route::post('/store', [AdminWebinarController::class, 'store'])->name('store');
         Route::get('/edit/{webinar}', [AdminWebinarController::class, 'edit'])->name('edit');
@@ -160,5 +183,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/sliders/{id}', [AdminSliderController::class, 'destroy'])->name('sliders.destroy');
 
 
+
+    Route::prefix('private_list')->name('private-classes.')->group(function () {
+        Route::get('/', [AdminPrivateClassListController::class, 'index'])->name('index');
+        Route::get('/{id}', [AdminPrivateClassListController::class, 'show'])->name('show');
+
+        Route::post('update-link/{id}', [AdminPrivateClassListController::class, 'updateClassLink'])
+            ->name('update-link');
+
+
+    });
 
 });

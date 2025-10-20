@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AgeGroup;
 use App\Models\Book;
 use App\Models\GroupClass;
+use App\Models\GroupClassReservation;
 use App\Models\GroupClassSchedule;
 use App\Models\Language;
 use App\Models\LanguageLevel;
@@ -209,6 +210,15 @@ class AdminGroupClassController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'زمان‌بندی با موفقیت بروزرسانی شد.');
+    }
+    public function groupClassReservations($id)
+    {
+        $reservations = GroupClassReservation::with('user') // رابطه با دانش‌آموز
+        ->where('group_class_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.group_classes.reservations', compact('reservations'));
     }
 
 }

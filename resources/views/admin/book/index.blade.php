@@ -4,7 +4,7 @@
     <div class="p-6 bg-gray-50 min-h-screen">
 
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">📚 تمام مانهواها</h1>
+            <h1 class="text-2xl font-bold text-gray-800">📚 تمام کتاب ها</h1>
 
             <a href="{{route('admin.books.create')}}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium rounded-lg shadow-sm transition transform hover:scale-105">

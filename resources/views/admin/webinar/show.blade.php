@@ -46,6 +46,10 @@
                    class="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow">
                     ✏️ ویرایش
                 </a>
+                <a href="{{ route('admin.webinar.groupClassReservations', $class) }}"
+                   class="px-5 py-2 bg-green-600 text-white rounded-xl hover:bg-blue-700 transition shadow">
+                    لیست دانش آموزان
+                </a>
 
             </div>
         </div>

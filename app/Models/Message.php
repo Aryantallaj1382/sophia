@@ -19,5 +19,15 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
+    public function getFilePathAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+
+    }
+    public function getVoicePathAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+
+    }
 
 }

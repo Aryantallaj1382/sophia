@@ -124,7 +124,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return api_response([],'ok');
+        return api_response([],'logout success');
     }
 
 }

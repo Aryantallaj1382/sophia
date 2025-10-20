@@ -6,8 +6,9 @@
     <title>@yield('title', 'پنل مدیریت')</title>
 
     <!-- Tailwind CSS -->
-
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tom-Select CSS & JS -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.default.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
@@ -38,15 +39,20 @@
     </script>
 
     <style>
-        @media (max-width: 1024px) {
-            #mobile-block {
-                display: flex !important;
-            }
+        /* وقتی موبایل یا تبلت است، محتوا مخفی می‌شود */
+        body.mobile #mainContent {
+            display: none;
         }
     </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800 font-sans">
+
+{{-- ✅ پیغام موبایل --}}
+<div id="mobileOverlay" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-6 text-center hidden">
+    <h1 class="text-2xl font-bold mb-2 text-gray-800">⚠️ وب‌سایت فقط روی دسکتاپ قابل استفاده است</h1>
+    <p class="text-gray-600">لطفاً با یک دستگاه دسکتاپ یا لپ‌تاپ وارد شوید.</p>
+</div>
 
 {{-- هدر --}}
 @include('admin.layouts.header')
@@ -56,7 +62,7 @@
     @include('admin.layouts.sidebar')
 
     {{-- محتوای اصلی --}}
-    <main class="flex-1 p-6">
+    <main id="mainContent" class="flex-1 p-6">
         @yield('content')
     </main>
 </div>
@@ -64,9 +70,31 @@
 {{-- فوتر --}}
 @include('admin.layouts.footer')
 
+{{-- اسکریپت‌ها --}}
 @vite('resources/js/app.js')
 @stack('scripts')
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+{{-- ✅ اسکریپت تشخیص موبایل و تبلت --}}
+<script>
+    function isMobileOrTablet() {
+        return window.innerWidth < 1024; // زیر 1024 پیکسل موبایل یا تبلت
+    }
+
+    function toggleMobileOverlay() {
+        const overlay = document.getElementById('mobileOverlay');
+        if (isMobileOrTablet()) {
+            overlay.classList.remove('hidden'); // نمایش پیغام
+            document.body.classList.add('mobile'); // مخفی کردن محتوای اصلی
+        } else {
+            overlay.classList.add('hidden');    // مخفی کردن پیغام
+            document.body.classList.remove('mobile'); // نمایش محتوا
+        }
+    }
+
+    window.addEventListener('load', toggleMobileOverlay);
+    window.addEventListener('resize', toggleMobileOverlay);
+</script>
 
 </body>
 </html>

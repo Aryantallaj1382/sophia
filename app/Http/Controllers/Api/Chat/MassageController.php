@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Chat;
 
 
+use App\Events\ChatUpdated;
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\User;
@@ -18,10 +20,6 @@ class MassageController extends Controller
             'message' => 'nullable|string|max:255',
             'file' => 'nullable|file',
             'voice' => 'nullable',
-        ], [], [
-            'message' => 'پیام',
-            'file' => 'فایل',
-            'voice' => 'صوت',
         ]);
         $sender = auth()->user();
         $receiver = User::findOrFail($receiverId);
@@ -35,35 +33,42 @@ class MassageController extends Controller
             'sender_id' => $sender->id,
         ];
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('uploads/files', 'public');
-            $data['file_path'] = $path;
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/files'), $filename); // ✅ ذخیره مستقیم در public
+            $data['file_path'] = 'uploads/files/' . $filename;
             $data['message_type'] = 'file';
         } elseif ($request->hasFile('voice')) {
-            $path = $request->file('voice')->store('uploads/voices', 'public');
-            $data['voice_path'] = $path;
+            $voice = $request->file('voice');
+            $filename = time() . '_' . $voice->getClientOriginalName();
+            $voice->move(public_path('uploads/voices'), $filename); // ✅ ذخیره مستقیم در public
+            $data['voice_path'] = 'uploads/voices/' . $filename;
             $data['message_type'] = 'voice';
         } else {
             $data['message'] = $request->message;
             $data['message_type'] = 'text';
         }
 
+
         $message = $conversation->messages()->create($data);
 
-//        event(new ChatUpdated($conversation->id, $sender->id, $receiver->id));
-//        event(new ChatUpdated($conversation->id, $receiver->id, $sender->id));
-//
-//        broadcast(new MessageSent([
-//            'user2_id' => $conversation->user1_id,
-//            'user1_id' => $conversation->user2_id,
-//            'message' => $message->message,
-//            'message_type' => $message->message_type,
-//            'file_path' => $message->file_path,
-//            'voice_path' => $message->voice_path,
-//            'sender_id' => $sender->id,
-//            'conversation_id' => $conversation->id,
-//        ]))->toOthers();
+        event(new ChatUpdated($conversation->id, $sender->id, $receiver->id));
+        event(new ChatUpdated($conversation->id, $receiver->id, $sender->id));
+        broadcast(new MessageSent([
+            'user2_id' => $conversation->user1_id,
+            'user1_id' => $conversation->user2_id,
+            'message' => $message->message,
+            'message_type' => $message->message_type,
+            'file_path' => $message->file_path,
+            'voice_path' => $message->voice_path,
+            'sender_id' => $sender->id,
+            'conversation_id' => $conversation->id,
+        ]))->toOthers();
 
-        return response()->json(['status' => 'Message sent']);
+        return response()->json([
+            'status' => 'Message sent',
+            'message' => $message->load('sender')
+        ]);
     }
 
 

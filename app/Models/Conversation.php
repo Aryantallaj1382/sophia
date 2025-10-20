@@ -25,4 +25,5 @@ class Conversation extends Model
         return $this->belongsTo(User::class, 'user2_id');
     }
 
+
 }

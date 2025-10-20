@@ -13,7 +13,7 @@
     <nav class="flex-1 p-4">
         <ul class="space-y-2 text-sm">
             <li>
-                <a href="{{route('welcome')}}"
+                <a href="{{route('admin.welcome')}}"
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition
                           hover:bg-blue-50 hover:text-blue-600 font-medium group">
                     <span class="material-icons text-gray-500 group-hover:text-blue-600">داشبورد</span>
@@ -92,18 +92,18 @@
 
 
         </ul>
-{{--        <ul class="space-y-2 text-sm">--}}
-{{--            <li>--}}
-{{--                <a href="{{route('admin.books.index')}}"--}}
-{{--                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition--}}
-{{--                          hover:bg-blue-50 hover:text-blue-600 font-medium group">--}}
-{{--                    <span class="material-icons text-gray-500 group-hover:text-blue-600">کتابخانه</span>--}}
+        <ul class="space-y-2 text-sm">
+            <li>
+                <a href="{{route('admin.books.index')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">کتابخانه</span>
 
-{{--                </a>--}}
-{{--            </li>--}}
+                </a>
+            </li>
 
 
-{{--        </ul>--}}
+        </ul>
 
         <ul class="space-y-2 text-sm">
             <li>
@@ -117,11 +117,47 @@
 
 
         </ul>
+        <ul class="space-y-2 text-sm">
+            <li>
+                <a href="{{route('admin.plans.index')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600"> پلن ها</span>
+
+                </a>
+            </li>
+
+
+        </ul>
+        <ul class="space-y-2 text-sm">
+            <li>
+                <a href="{{route('admin.private-classes.index')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">کلاس های خصوصی</span>
+
+                </a>
+            </li>
+
+
+        </ul>
+        <ul class="space-y-2 text-sm">
+            <li>
+                <a href="{{route('admin.stories.main')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">استوری های صفحه اصلی</span>
+
+                </a>
+            </li>
+
+
+        </ul>
     </nav>
 
     {{-- دکمه خروج --}}
     <div class="p-4 border-t">
-        <form method="POST" action="#">
+        <form action="{{ route('admin.logout') }}" method="POST">
             @csrf
             <button
                 class="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600
