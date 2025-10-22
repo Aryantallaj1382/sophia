@@ -35,6 +35,8 @@
 
 
         </ul>
+
+
         <ul class="space-y-2 text-sm">
             <li>
                 <a href="{{route('admin.exams.index')}}"
@@ -104,7 +106,18 @@
 
 
         </ul>
+        <ul class="space-y-2 text-sm">
+            <li>
+                <a href="{{route('admin.tickets.index')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">تیکت ها</span>
 
+                </a>
+            </li>
+
+
+        </ul>
         <ul class="space-y-2 text-sm">
             <li>
                 <a href="{{route('admin.conversations.index')}}"

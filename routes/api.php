@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ChatUpdated;
 use App\Events\SimpleMessage;
 use App\Events\UserTyping;
 use App\Http\Controllers\Api\Auth\AuthController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Api\Students\WebinarController;
 use App\Http\Controllers\Api\Ticket\TicketController;
 use App\Http\Controllers\Api\Wllet\WalletController;
 use App\Mail\OtpMail;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 
 //Route::middleware('frontend.secret')->group(function () {
@@ -336,12 +338,17 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
 
     });
 });
-Route::post('/chat/typing/{user1Id}/{user2Id}', function ($user1Id, $user2Id) {
+Route::post('/chat/typing/{user1Id}/{user2Id}/', function ($user1Id, $user2Id) {
     $user = auth('sanctum')->user(); // یا auth('sanctum')->user() اگر از Sanctum استفاده می‌کنید
     if (!$user) {
         return response()->json(['error' => 'Unauthorized'], 401);
     }
+    $a = min($user1Id, $user2Id);
+    $b = max($user1Id, $user2Id);
+    $conversation = Conversation::where('user1_id', $a)->where('user2_id', $b)->first();
     event(new UserTyping($user->id, $user1Id, $user2Id));
+    event(new ChatUpdated($conversation->id, $user1Id, $user2Id ,true));
+
     return response()->json(['status' => 'success']);
 })->middleware('auth:sanctum'); // یا middleware مورد نظر شما
 

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminProfessorController;
 use App\Http\Controllers\Admin\AdminProfessorStoryController;
 use App\Http\Controllers\Admin\AdminSliderController;
 use App\Http\Controllers\Admin\AdminStoryController;
+use App\Http\Controllers\Admin\AdminTicketController;
 use App\Http\Controllers\Admin\AdminWebinarController;
 use App\Http\Controllers\Admin\ConversationController;
 use App\Http\Controllers\Admin\UserController;
@@ -69,6 +70,9 @@ Route::middleware('guest:web')->group(function() {
 });
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('welcome');
+    Route::get('/tickets', [AdminTicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{id}', [AdminTicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/{id}/reply', [AdminTicketController::class, 'reply'])->name('tickets.reply');
 
     Route::delete('/stories/{story}', [AdminStoryController::class, 'destroy'])->name('stories.destroy');
 

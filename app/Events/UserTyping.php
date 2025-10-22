@@ -19,8 +19,9 @@ class UserTyping implements ShouldBroadcast
     public function __construct($userId, $user1Id, $user2Id)
     {
         $this->userId = $userId;
-        $this->user1Id = $user1Id;
-        $this->user2Id = $user2Id;
+        // ترتیب ثابت: ID کوچکتر به‌عنوان user1Id و ID بزرگتر به‌عنوان user2Id
+        $this->user1Id = min($user1Id, $user2Id);
+        $this->user2Id = max($user1Id, $user2Id);
     }
 
     public function broadcastOn()

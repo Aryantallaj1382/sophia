@@ -11,7 +11,7 @@
     <div class="flex items-center gap-6">
         {{-- نوتیفیکیشن --}}
         <div class="relative">
-            <button class="relative text-gray-600 hover:text-blue-600 transition">
+            <a href="{{ route('admin.tickets.index') }}" class="relative text-gray-600 hover:text-blue-600 transition">
                 <!-- Heroicon Bell -->
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -19,8 +19,10 @@
                 </svg>
 
                 <!-- تعداد اعلان‌ها -->
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">3</span>
-            </button>
+                @if (\App\Models\Ticket::where('status', 'pending')->count() > 0)
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">{{ \App\Models\Ticket::where('status', 'pending')->count() }}</span>
+                @endif
+                </a>
         </div>
 
 
