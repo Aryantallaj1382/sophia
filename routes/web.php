@@ -65,9 +65,9 @@ Route::get('/optimize', function () {
 //
 //require __DIR__.'/auth.php';
 Route::middleware('guest:web')->group(function() {
-    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
-});
+        Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+        Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+    });
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('welcome');
     Route::get('/tickets', [AdminTicketController::class, 'index'])->name('tickets.index');

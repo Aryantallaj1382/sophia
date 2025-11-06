@@ -22,12 +22,15 @@ class AdminProfessorController extends Controller
     {
         $query = Professor::query();
 
-        // جستجو
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%");
+
+            $query->where(function ($q) use ($search) {
+                $q->where('id', $search) // بررسی id استاد
+                ->orWhereHas('user', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%");
+                });
             });
         }
 

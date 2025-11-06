@@ -9,7 +9,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mb-4">
         <!-- فرم جستجو -->
         <form method="GET" action="{{ route('admin.professors.index') }}" class="flex gap-2">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="جستجو..."
+            <input type="text" name="search" value="{{ request('search') }}" placeholder=" کد , نام , ایمیل..."
                    class="p-2 border rounded">
             <button type="submit" class="bg-blue-500 text-white p-2 rounded">جستجو</button>
         </form>
@@ -30,19 +30,16 @@
             <thead>
             <tr class="bg-gray-100 text-gray-700">
                 <th class="px-4 py-2 border text-center">
-                    <a href="{{ route('admin.professors.index', ['sort' => 'id', 'direction' => request('direction') == 'desc' ? 'asc' : 'desc']) }}">
                         #
-                    </a>
                 </th>
                 <th class="px-4 py-2 border">
-                    <a href="{{ route('admin.professors.index', ['sort' => 'name', 'direction' => request('direction') == 'desc' ? 'asc' : 'desc']) }}">
                         نام استاد
-                    </a>
                 </th>
                 <th class="px-4 py-2 border">
-                    <a href="{{ route('admin.professors.index', ['sort' => 'email', 'direction' => request('direction') == 'desc' ? 'asc' : 'desc']) }}">
+                        کد استاد
+                </th>
+                <th class="px-4 py-2 border">
                         ایمیل
-                    </a>
                 </th>
                 <th class="px-4 py-2 border text-center">
                     <a href="{{ route('admin.professors.index', ['sort' => 'created_at', 'direction' => request('direction') == 'desc' ? 'asc' : 'desc']) }}">
@@ -55,7 +52,7 @@
             <tbody>
             @forelse($professors as $index => $professor)
                 <tr class="text-gray-600 hover:bg-gray-50 transition">
-                    <td class="px-4 py-2 border text-center">{{ $professors->firstItem() + $index }}</td>
+                    <td class="px-4 te py-2 border text-center">{{ $professors->firstItem() + $index }}</td>
 
                     <td class="px-4 py-2 border flex items-center gap-2">
                         <img src="{{ $professor->user->profile ? asset($professor->user->profile) : 'https://ui-avatars.com/api/?name='.urlencode($professor->user->name).'&background=0D8ABC&color=fff&size=40' }}"
@@ -63,8 +60,9 @@
                              class="w-10 h-10 rounded-full border">
                         <span>{{ $professor->user->name }}</span>
                     </td>
-                    <td class="px-4 py-2 border">{{ $professor->user->email }}</td>
-                    <td class="px-4 py-2 border text-center">{{ $professor?->created_at?->format('d M Y') }}</td>
+                    <td class="px-4 py-2 text-center border">{{ $professor->id }}</td>
+                    <td class="px-4 py-2 text-center border">{{ $professor->user->email }}</td>
+                    <td class="px-4 py-2 border  text-center">{{ $professor?->created_at?->format('d M Y') }}</td>
                     <td class="px-4 py-2 border text-center">
                         <a href="{{route('admin.professors.show' , $professor->id)}}" class="text-blue-500 hover:text-blue-700">نمایش</a>
                         <a href="{{route('admin.professors.edit' , $professor->id)}}" class="text-gray-50-500 hover:text-blue-700">ویرایش</a>

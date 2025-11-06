@@ -92,10 +92,17 @@
                            class="block w-full text-sm border rounded-md p-2 focus:ring focus:ring-blue-200">
                 </div>
                 <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">تصویر موبایل اسلایدر <span class="text-red-500">*</span></label>
+                    <input type="file" name="mobile_image" accept="mobile_image/*" required
+                           class="block w-full text-sm border rounded-md p-2 focus:ring focus:ring-blue-200">
+                </div>
+
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">لینک (اختیاری)</label>
                     <input type="text" name="link" placeholder="https://example.com"
                            class="block w-full text-sm border rounded-md p-2 focus:ring focus:ring-blue-200">
                 </div>
+
 
                 <div class="flex justify-end space-x-2">
                     <button type="button" onclick="closeModal()"

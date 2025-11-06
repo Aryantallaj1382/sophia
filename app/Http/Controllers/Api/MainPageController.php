@@ -26,6 +26,7 @@ class MainPageController extends Controller
             return [
                 'id' => $slider->id,
                 'image' => $slider->image,
+                'mobile_image' => $slider->mobile_image,
                 'link' => $slider->link,
             ];
         });

@@ -1,7 +1,6 @@
 <?php
 
 use App\Events\ChatUpdated;
-use App\Events\SimpleMessage;
 use App\Events\UserTyping;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\BlogController;
@@ -65,7 +64,6 @@ Route::prefix('exam')->controller(ExamController::class)->group(function () {
     Route::post('/like/{id}', 'toggleLike')->middleware('auth:sanctum');
     Route::post('/rate/{id}', 'rate')->middleware('auth:sanctum');
     Route::post('/buy/{id}', 'buy_exam')->middleware('auth:sanctum');
-
 
     Route::post('/answer', 'submitAnswers')->middleware('auth:sanctum');
     Route::post('/getPartAnswers', 'getPartAnswers')->middleware('auth:sanctum');

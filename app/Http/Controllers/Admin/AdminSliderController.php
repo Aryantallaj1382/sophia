@@ -13,11 +13,13 @@ class AdminSliderController
         return view('admin.sliders.index', compact('sliders'));
     }
 
+
     // ذخیره اسلایدر جدید
     public function store(Request $request)
     {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'mobile_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'link'  => 'nullable|url',
         ]);
 
@@ -28,16 +30,15 @@ class AdminSliderController
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0777, true);
         }
-
-        // نام یکتا برای فایل
         $fileName = time() . '_' . uniqid() . '.' . $request->file('image')->getClientOriginalExtension();
-
-        // انتقال فایل به public/sliders
         $request->file('image')->move($destinationPath, $fileName);
 
-        // ذخیره در دیتابیس
+        $fileName1 = time() . '_' . uniqid() . '.' . $request->file('mobile_image')->getClientOriginalExtension();
+        $request->file('mobile_image')->move($destinationPath, $fileName);
+
         Slider::create([
             'image' => 'sliders/' . $fileName, // مسیر نسبی برای نمایش
+            'mobile_image' => 'sliders/' . $fileName1, // مسیر نسبی برای نمایش
             'link'  => $request->link,
         ]);
 

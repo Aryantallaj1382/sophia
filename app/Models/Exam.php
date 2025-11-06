@@ -14,7 +14,8 @@ class Exam extends Model
         'name',
         'description',
         'view',
-        'type', 'age_group_id', 'language_level_id', 'skill_id'
+        'type', 'age_group_id', 'language_level_id', 'skill_id',
+        'books_id'
 
     ];
     protected $casts = [

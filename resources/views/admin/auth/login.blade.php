@@ -38,6 +38,7 @@
         }
     </script>
 
+
     <style>
         @media (max-width: 1024px) {
             #mobile-block {

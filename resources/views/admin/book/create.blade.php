@@ -60,7 +60,7 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div>
-                        <label class="block mb-1 font-semibold text-gray-700">حجم (Volume)</label>
+                        <label class="block mb-1 font-semibold text-gray-700">جلد (Volume)</label>
                         <input type="number" name="volume" min="1"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>

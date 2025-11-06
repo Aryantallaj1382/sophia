@@ -52,7 +52,7 @@
 
                         <div class="mt-3">
                             <p class="text-gray-800 font-semibold">
-                                قیمت: <span class="text-black">{{ number_format($plan->price) }} تومان</span>
+                                قیمت: <span class="text-black">{{ number_format($plan->price) }} یوان</span>
                             </p>
                             @if($plan->discount_amount)
                                 <p class="text-sm text-green-600">
