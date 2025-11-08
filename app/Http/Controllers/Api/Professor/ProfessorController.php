@@ -31,13 +31,10 @@ class ProfessorController extends Controller
             $point[$goal->title][$subgoal->sub][] = $subgoal->title;
         }
         $lang = $request->header('X-Language', 'en'); // مثلا 'ch' برای چینی
-
         $accents = $professor->accents()->get()->map(fn($item) => $lang === 'zh' ? ($item->title_ch ?? $item->title) : $item->title
         )->toArray();
-
         $ageGroups = $professor->ageGroups()->get()->map(fn($item) => $lang === 'zh' ? ($item->title_ch ?? $item->title) : $item->title
         )->toArray();
-
         $languageLevels = $professor->languageLevels()->get()->map(fn($item) => $lang === 'zh' ? ($item->title_ch ?? $item->title) : $item->title
         )->toArray();
         $group = GroupClass::where('professor_id', $professor->id)->get()->map(function ($item) {
@@ -49,8 +46,6 @@ class ProfessorController extends Controller
                 'name' => $item->name,
                 'professor' => $item->professor->name,
                 'profile' => $item->professor->user->profile,
-
-
             ];
         });
         $story = Story::where('professor_id', $professor->id)->get()->map(function ($item) {
@@ -59,8 +54,6 @@ class ProfessorController extends Controller
                 'cover' => $item->cover_image,
                 'like_count' => $item->likes()->count(),
                 'comment_count' => $item->comments()->count(),
-
-
             ];
         });
         $webinar = Webinar::where('professor_id', $professor->id)->get()->map(function ($item) {
@@ -72,7 +65,6 @@ class ProfessorController extends Controller
                 'name' => $item->name,
                 'professor' => $item->professor->name,
                 'profile' => $item->professor->user->profile,
-
             ];
         });
         $return = [
@@ -106,7 +98,6 @@ class ProfessorController extends Controller
             'teaching_video' => $professor->teaching_video,
             'teaching_video_cover' => $professor->teaching_video_cover,
             'available' => $professor->nearest_open_time,
-
             'placement' => 1,
             'trial' => 2,
             'number_student' => 0,
@@ -114,14 +105,12 @@ class ProfessorController extends Controller
             'number_group' => 0,
             'number_private' => 0,
         ];
-
         return api_response($return);
 
     }
     public function get_user()
     {
         $user = auth()->user();
-
         return api_response([
             'balance' => $user?->wallet?->balance,
             'name' => $user?->name,
@@ -129,6 +118,5 @@ class ProfessorController extends Controller
             'user_id' => $user->id,
             'id' => $user->professor?->id,
         ]);
-
     }
 }
