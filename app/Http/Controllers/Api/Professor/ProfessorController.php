@@ -124,7 +124,7 @@ class ProfessorController extends Controller
 
         return api_response([
             'balance' => $user?->wallet?->balance,
-            'name' => $user?->professor?->name,
+            'name' => $user?->name,
             'profile' => $user->profile,
             'user_id' => $user->id,
             'id' => $user->professor?->id,

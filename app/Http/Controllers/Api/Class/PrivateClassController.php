@@ -164,7 +164,10 @@ PrivateClassController extends Controller
         $query->where('is_active', true);
 
         $professors = $query->with('user')->paginate(15);
-
+//        $professors = $query
+//            ->with('user')
+//            ->orderByDesc('is_active') // فعال‌ها بالاتر
+//            ->paginate(15);
         $professors->getCollection()->transform(function ($item) {
             return [
                 'id' => $item->id,
