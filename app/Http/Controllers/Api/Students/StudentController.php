@@ -7,9 +7,28 @@ use App\Models\LearningSubgoal;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
+    public function uploadProfileImage(Request $request)
+    {
+        $user = auth()->user();
+        $request->validate([
+            'profile' => 'required',
+        ]);
+
+        if ($user->profile) {
+            Storage::delete('public/profiles' . basename($user->profile));
+        }
+        $imageName = time() . '.' . $request->profile->extension();
+        $request->profile->move(public_path('profiles'), $imageName);
+        $user->profile = 'profiles' . $imageName;
+        $user->save();
+
+        return api_response([],'ذخیره شد');
+    }
+
     public function show()
     {
         $user = auth()->user();
@@ -18,12 +37,14 @@ class StudentController extends Controller
          'first_name' => $students->first_name,
          'last_name' => $students->last_name,
          'email' => $students->email,
+         'user_id' => $students->user_id,
          'phone' => $students->phone,
          'we_chat' => $students->we_chat,
-         'birth_date' => $students->birth_date->format('Y-m-d'),
+         'nickname' => $students->nickname,
+         'birth_date' => $students->birth_date?->format('Y-m-d'),
          'gender' => $students->gender,
          'level' => $students->level,
-         'profile' => $students->profile,
+         'profile' => $students->user->profile,
            'goal' => $students->learningSubgoals->map(function ($goal) {
                return [
                    'id' => $goal->id,
@@ -43,6 +64,8 @@ class StudentController extends Controller
             'email' => 'nullable',
             'phone' => 'nullable',
             'we_chat' => 'nullable',
+            'nickname' => 'nullable',
+            'profile' => 'nullable',
             'gender' => 'nullable',
             'birth_date' => 'nullable',
             'learning_subgoals' => 'array|nullable', // آی‌دی‌های اهداف
@@ -52,6 +75,16 @@ class StudentController extends Controller
         $student = Student::where('user_id', $user->id)->first();
 
         $student->update($request->except('learning_subgoals'));
+
+
+        if ($user->profile) {
+            Storage::delete('public/profiles' . basename($user->profile));
+        }
+        $imageName = time() . '.' . $request->profile->extension();
+        $request->profile->move(public_path('profiles'), $imageName);
+        $user->profile = 'profiles/' . $imageName;
+        $user->save();
+
 
         if ($request->has('learning_subgoals')) {
             $student->learningSubgoals()->sync($request->learning_subgoals);

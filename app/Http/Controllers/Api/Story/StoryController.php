@@ -31,9 +31,8 @@ class StoryController extends Controller
                 'video' => $story->video,
                 'title' => $story->title,
                 'professor'=>[
-                    'name' => $story->professor->name,
-                    'profile' => $story->professor->user->profile,
-
+                    'name' => $story->professor?->name,
+                    'profile' => $story->professor?->user->profile,
                 ],
                 'likes_count' => $story->likes()->count(),
                 'is_liked' => $user1 ? $story->likes()->where('user_id', $user1->id)->exists() : false,

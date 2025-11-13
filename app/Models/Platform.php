@@ -12,4 +12,8 @@ class Platform extends Model
     {
         return $this->belongsToMany(Professor::class);
     }
+    public function getIconAttribute($value)
+    {
+        return $value ? url('public/'.$value): null;
+    }
 }

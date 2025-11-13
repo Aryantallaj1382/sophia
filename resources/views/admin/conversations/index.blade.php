@@ -8,7 +8,7 @@
                 <a href="{{ route('admin.conversations.show', $conversation->id) }}"
                    class="block p-4 bg-white rounded-lg shadow hover:shadow-lg transition">
                     <h2 class="font-semibold text-lg text-slate-700">
-                        {{ $conversation->user1->name }} و {{ $conversation->user2->name }}
+                        {{ $conversation?->name }}
                     </h2>
                     <p class="text-sm text-slate-500 mt-2">
                         {{ $conversation->messages->last()?->message ?? 'پیامی موجود نیست' }}

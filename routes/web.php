@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminBlogsController;
 use App\Http\Controllers\Admin\AdminBookController;
+use App\Http\Controllers\Admin\AdminCertificateController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminExam\ExamController;
 use App\Http\Controllers\Admin\AdminExam\ExamQuestionController;
@@ -95,6 +96,11 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('books', AdminBookController::class);
     Route::resource('plans', AdminPlanController::class);
     Route::get('Plans/{plan}/users', [AdminPlanController::class, 'users'])->name('plans.users');
+    Route::prefix('certificates')->name('certificates.')->group(function () {
+        Route::get('', [AdminCertificateController::class, 'index'])->name('index');
+        Route::get('/{certificate}/edit', [AdminCertificateController::class, 'edit'])->name('edit');
+        Route::post('/{certificate}', [AdminCertificateController::class, 'update'])->name('update');
+    });
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');

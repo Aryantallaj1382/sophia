@@ -26,7 +26,7 @@ class ProfessorPrivateClassController extends Controller
             return [
                 'id' => $item->id,
                 'professor_id' => $item->user->id,
-                'professor_name' => $item->user->name,
+                'professor_name' => $item->user?->student?->nickname,
                 'professor_profile' => $item->user->profile,
                 'subgoal' => $item->subgoal->goal->title . ' (' . $item->subgoal->title . ')',
                 'date' => $item->timeSlots()
@@ -94,7 +94,7 @@ class ProfessorPrivateClassController extends Controller
                 'link' => $book?->link,
                 'file' => $book?->file,
             ],
-            'reserve_time' => $private->created_at->format('D ,j M Y , H:i'),
+            'reserve_time' => $private->created_at?->format('D ,j M Y , H:i'),
 
         ];
         return api_response($return);

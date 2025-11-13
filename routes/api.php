@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\MainPageController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\Plans\UserPlansController;
 use App\Http\Controllers\Api\Professor\DashboardController;
+use App\Http\Controllers\Api\Professor\ProfessorCalenderController;
 use App\Http\Controllers\Api\Professor\ProfessorController;
 use App\Http\Controllers\Api\Professor\ProfessorWebinarController;
 use App\Http\Controllers\Api\StudentDashboardController;
@@ -172,6 +173,7 @@ Route::prefix('blog')->middleware('optional.auth')->controller(BlogController::c
 
 Route::prefix('student')->middleware('auth:sanctum')->controller(StudentController::class)->group(function () {
     Route::get('/', 'show');
+    Route::post('/profile', 'uploadProfileImage');
     Route::post('/', 'store');
     Route::post('/pass', 'pass');
     Route::get('/goal', 'goal');
@@ -327,13 +329,19 @@ Route::prefix('professor')->middleware('auth:sanctum')->controller(StudentContro
         Route::get('/new_class/{id}', 'new_class');
 //
     });
+    Route::prefix('times')->middleware('auth:sanctum')->controller(ProfessorCalenderController::class)->group(function () {
+        Route::get('/', 'show');
+        Route::post('/store', [ProfessorCalenderController::class, 'store']);
 
+    });
     Route::prefix('webinar')->middleware('auth:sanctum')->controller(ProfessorWebinarController::class)->group(function () {
         Route::get('/', 'index');
         Route::get('/information/{id}', 'information');
         Route::get('/new_class/{id}', 'new_class');
+    });
 
-
+    Route::prefix('reservation')->controller(\App\Http\Controllers\Api\Professor\ProfessorReservationController::class)->name('reservation.')->group(function () {
+        Route::get('/', 'index2')->name('index2');
     });
 });
 Route::post('/chat/typing/{user1Id}/{user2Id}/', function ($user1Id, $user2Id) {

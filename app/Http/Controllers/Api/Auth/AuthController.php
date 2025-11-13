@@ -77,6 +77,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'referral_code' => 'nullable|string',
             'otp' => 'required|string',
+            'birth_date' => 'nullable|date',
         ]);
 
         $cacheKey = 'otp:' . $request->email;
@@ -103,6 +104,7 @@ class AuthController extends Controller
 
         $student = Student::create([
             'user_id' => $user->id,
+            'birth_date' => $request->birth_date,
             'referral_code' => $request->referral_code,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,

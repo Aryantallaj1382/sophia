@@ -953,7 +953,7 @@ PrivateClassController extends Controller
     public function index(Request $request)
     {
         $professor_id = $request->input('professor_id');
-        $level = LanguageLevel::all();
+        $level = LanguageLevel::where('id'  , '!=', 1)->get();
         $skill = Skill::all();
         if ($professor_id) {
             $professor = \App\Models\Professor::find($professor_id);

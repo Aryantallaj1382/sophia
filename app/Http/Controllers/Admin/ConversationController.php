@@ -9,8 +9,8 @@ class ConversationController extends Controller
 {
     public function index()
     {
-        $conversations = Conversation::with(['user1', 'user2', 'messages.sender'])
-            ->latest()
+        $conversations = Conversation::
+             latest()
             ->get();
 
         return view('admin.conversations.index', compact('conversations'));
@@ -19,9 +19,9 @@ class ConversationController extends Controller
     // مشاهده پیام‌های یک چت
     public function show($id)
     {
-        $conversation = Conversation::with(['messages.sender', 'user1', 'user2'])
-            ->findOrFail($id);
+        $conversation = Conversation::findOrFail($id);
+        $user = auth()->user()->id;
 
-        return view('admin.conversations.show', compact('conversation'));
+        return view('admin.conversations.show', compact(['conversation','user']));
     }
 }

@@ -15,15 +15,12 @@ class Conversation extends Model
         return $this->hasMany(Message::class);
     }
 
-    public function user1()
+    public function conversationUsers()
     {
-        return $this->belongsTo(User::class, 'user1_id');
+        return $this->hasMany(ConversationUser::class, 'conversation_id');
     }
 
-    public function user2()
-    {
-        return $this->belongsTo(User::class, 'user2_id');
-    }
+
 
 
 }

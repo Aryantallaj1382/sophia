@@ -8,13 +8,17 @@ class ProfessorTimeSlot extends Model
 {
     protected $table = 'professor_time_slots';
 
-    protected $fillable = [
-        'professor_id',
-        'date',
-        'time',
-        'min_blocks',
-        'status',
-    ];
+
+    protected $guarded = [];
+    public function privetClassReservations()
+    {
+        return $this->belongsToMany(
+            PrivateClassReservation::class,
+            'private_professor_time_slot',
+            'professor_time_slot_id',
+            'private_class_reservation_id'
+        );
+    }
 
     public function professor()
     {

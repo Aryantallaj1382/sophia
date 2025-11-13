@@ -57,10 +57,22 @@
         </ul>
         <ul class="space-y-2 text-sm">
             <li>
+                <a href="{{route('admin.private-classes.index')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">کلاس های خصوصی</span>
+
+                </a>
+            </li>
+
+
+        </ul>
+        <ul class="space-y-2 text-sm">
+            <li>
                 <a href="{{route('admin.webinar.index')}}"
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition
                           hover:bg-blue-50 hover:text-blue-600 font-medium group">
-                    <span class="material-icons text-gray-500 group-hover:text-blue-600">وبینار</span>
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">وبینار ها</span>
                 </a>
             </li>
         </ul>
@@ -70,6 +82,15 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition
                           hover:bg-blue-50 hover:text-blue-600 font-medium group">
                     <span class="material-icons text-gray-500 group-hover:text-blue-600">بلاگ ها </span>
+                </a>
+            </li>
+        </ul>
+        <ul class="space-y-2 text-sm">
+            <li>
+                <a href="{{route('admin.certificates.index')}}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">وبینار ها</span>
                 </a>
             </li>
         </ul>
@@ -142,18 +163,7 @@
 
 
         </ul>
-        <ul class="space-y-2 text-sm">
-            <li>
-                <a href="{{route('admin.private-classes.index')}}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition
-                          hover:bg-blue-50 hover:text-blue-600 font-medium group">
-                    <span class="material-icons text-gray-500 group-hover:text-blue-600">کلاس های خصوصی</span>
 
-                </a>
-            </li>
-
-
-        </ul>
         <ul class="space-y-2 text-sm">
             <li>
                 <a href="{{route('admin.stories.main')}}"

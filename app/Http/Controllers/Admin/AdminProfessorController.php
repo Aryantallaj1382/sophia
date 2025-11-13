@@ -177,7 +177,7 @@ class AdminProfessorController extends Controller
             'mobile' => 'nullable|string|max:20',
             'years_of_experience' => 'nullable|integer|min:0',
             'bio' => 'nullable|string',
-            'password' => 'nullable|confirmed|min:6',
+            'password' => 'nullable',
             'profile' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
             'sample_video' => 'nullable|mimetypes:video/mp4,video/mov,video/avi|max:20000',
             'teaching_video' => 'nullable|mimetypes:video/mp4,video/mov,video/avi|max:20000',

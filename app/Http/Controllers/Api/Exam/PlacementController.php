@@ -14,7 +14,7 @@ class PlacementController extends Controller
     public function info()
     {
         $skills = Skill::all();
-        $level = LanguageLevel::all();
+        $level = LanguageLevel::where('id' ,'!=' , 1)->get();
         return api_response([
             'skills' => $skills,
             'level' => $level,
