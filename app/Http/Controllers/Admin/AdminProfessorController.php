@@ -48,7 +48,7 @@ class AdminProfessorController extends Controller
     public function create()
     {
         $age = AgeGroup::all();
-        $level= AgeGroup::all();
+        $level= LanguageLevel::all();
         $platform= Platform::all();
         $accent= Accent::all();
         $skill= Skill::all();
@@ -79,12 +79,13 @@ class AdminProfessorController extends Controller
     {
         // اعتبارسنجی ورودی‌ها
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'mobile' => 'required|string|max:20',
             'bio' => 'nullable|string',
-            'years_of_experience' => 'nullable|integer|min:0',
+            'years_of_experience' => 'nullable',
             'is_active' => 'nullable',
             'is_verified' => 'nullable',
             'is_native' => 'nullable',
@@ -106,10 +107,11 @@ class AdminProfessorController extends Controller
             $destinationPath = public_path('profile');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $file->move($destinationPath, $fileName);
-            $profile = 'profile' . $fileName;
+            $profile = 'profile/' . $fileName;
         }
         $user = User::create([
-            'first_name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'profile' => $profile ?? null,
             'password' => bcrypt($request->password),
@@ -119,32 +121,51 @@ class AdminProfessorController extends Controller
         $professor = Professor::create([
             'user_id' => $user->id,
             'bio' => $request->bio,
-            'name' => $request->name,
+            'name' => $request->first_name.' '.$request->last_name,
             'phone' => $request->mobile,
             'years_of_experience' => $request->years_of_experience,
             'is_active' => $request->boolean('is_active'),
             'is_verified' => $request->boolean('is_verified'),
             'is_native' => $request->boolean('is_native'),
             'gender' => $request->gender,
-            'birth_date' => $request->birthdate,
+            'birth_date' => $request->birth_date,
             'placement' => $request->placement,
             'trial' => $request->trial,
         ]);
 
 
-        // آپلود فایل‌ها
-        if ($request->hasFile('video_1')) {
-            $professor->video_1 = $request->file('video_1')->store('professors/videos', 'public');
+        if ($request->hasFile('sample_video')) {
+            $file = $request->file('sample_video');
+            $destinationPath = public_path('professors/sample_video');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->sample_video = 'professors/sample_video/' . $fileName;
         }
-        if ($request->hasFile('video_2')) {
-            $professor->video_2 = $request->file('video_2')->store('professors/videos', 'public');
+
+        if ($request->hasFile('teaching_video')) {
+            $file = $request->file('teaching_video');
+            $destinationPath = public_path('professors/teaching_video');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->teaching_video = 'professors/teaching_video/' . $fileName;
         }
-        if ($request->hasFile('image_1')) {
-            $professor->image_1 = $request->file('image_1')->store('professors/images', 'public');
+
+        if ($request->hasFile('sample_video_cover')) {
+            $file = $request->file('sample_video_cover');
+            $destinationPath = public_path('professors/images');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->sample_video_cover = 'professors/images/' . $fileName;
         }
-        if ($request->hasFile('image_2')) {
-            $professor->image_2 = $request->file('image_2')->store('professors/images', 'public');
+
+        if ($request->hasFile('teaching_video_cover')) {
+            $file = $request->file('teaching_video_cover');
+            $destinationPath = public_path('professors/images');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->teaching_video_cover = 'professors/images/' . $fileName;
         }
+
 
         $professor->save();
         $user->save();
@@ -203,29 +224,90 @@ class AdminProfessorController extends Controller
             'birth_date' => $request->birth_date,
         ]);
 
+
+// پروفایل
         if ($request->hasFile('profile')) {
-            if ($professor->user->profile) {
-                Storage::disk('public')->delete($professor->user->profile);
+            $file = $request->file('profile');
+
+            if ($professor->user->profile && file_exists(public_path($professor->user->profile))) {
+                unlink(public_path($professor->user->profile));
             }
-            $path = $request->file('profile')->store('professors/profile', 'public');
-            $professor->user->update(['profile' => $path]);
+
+            $destinationPath = public_path('professors/profile');
+            if (!file_exists($destinationPath)) mkdir($destinationPath, 0755, true);
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->user->update(['profile' => 'professors/profile/' . $fileName]);
         }
+
+// ویدیو نمونه تدریس
         if ($request->hasFile('sample_video')) {
-            if ($professor->sample_video) {
-                Storage::disk('public')->delete($professor->sample_video);
+            $file = $request->file('sample_video');
+
+            if ($professor->sample_video && file_exists(public_path($professor->sample_video))) {
+                unlink(public_path($professor->sample_video));
             }
-            $professor->update([
-                'sample_video' => $request->file('sample_video')->store('professors/videos', 'public')
-            ]);
+
+            $destinationPath = public_path('professors/sample_video');
+            if (!file_exists($destinationPath)) mkdir($destinationPath, 0755, true);
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->sample_video = 'professors/sample_video/' . $fileName;
         }
+
+// ویدیو معرفی
         if ($request->hasFile('teaching_video')) {
-            if ($professor->teaching_video) {
-                Storage::disk('public')->delete($professor->teaching_video);
+            $file = $request->file('teaching_video');
+
+            if ($professor->teaching_video && file_exists(public_path($professor->teaching_video))) {
+                unlink(public_path($professor->teaching_video));
             }
-            $professor->update([
-                'teaching_video' => $request->file('teaching_video')->store('professors/videos', 'public')
-            ]);
+
+            $destinationPath = public_path('professors/teaching_video');
+            if (!file_exists($destinationPath)) mkdir($destinationPath, 0755, true);
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->teaching_video = 'professors/teaching_video/' . $fileName;
         }
+
+// کاور ویدیوی نمونه تدریس
+        if ($request->hasFile('sample_video_cover')) {
+            $file = $request->file('sample_video_cover');
+
+            if ($professor->sample_video_cover && file_exists(public_path($professor->sample_video_cover))) {
+                unlink(public_path($professor->sample_video_cover));
+            }
+
+            $destinationPath = public_path('professors/images');
+            if (!file_exists($destinationPath)) mkdir($destinationPath, 0755, true);
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->sample_video_cover = 'professors/images/' . $fileName;
+        }
+
+// کاور ویدیوی معرفی
+        if ($request->hasFile('teaching_video_cover')) {
+            $file = $request->file('teaching_video_cover');
+
+            if ($professor->teaching_video_cover && file_exists(public_path($professor->teaching_video_cover))) {
+                unlink(public_path($professor->teaching_video_cover));
+            }
+
+            $destinationPath = public_path('professors/images');
+            if (!file_exists($destinationPath)) mkdir($destinationPath, 0755, true);
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move($destinationPath, $fileName);
+            $professor->teaching_video_cover = 'professors/images/' . $fileName;
+        }
+
+        $professor->save();
+
+
         $professor->ageGroups()->sync($request->input('age_groups', []));
         $professor->languageLevels()->sync($request->input('level', []));
         $professor->platforms()->sync($request->input('platform', []));
@@ -240,5 +322,34 @@ class AdminProfessorController extends Controller
         return redirect()->route('admin.professors.edit', $professor)->with('success', 'اطلاعات استاد با موفقیت به‌روزرسانی شد.');
     }
 
+    public function destroy($id)
+    {
+        // پیدا کردن استاد
+        $professor = Professor::findOrFail($id);
+
+        // حذف فایل‌های آپلود شده اگر وجود داشته باشند
+        $files = [
+            $professor->profile ?? null,
+            $professor->sample_video ?? null,
+            $professor->teaching_video ?? null,
+            $professor->sample_video_cover ?? null,
+            $professor->teaching_video_cover ?? null,
+        ];
+
+        foreach ($files as $file) {
+            if ($file && file_exists(public_path($file))) {
+                @unlink(public_path($file));
+            }
+        }
+
+        // حذف کاربر مرتبط
+        $user = $professor->user;
+        $professor->delete();
+        if ($user) {
+            $user->delete();
+        }
+
+        return redirect()->back()->with('success', 'استاد با موفقیت حذف شد.');
+    }
 
 }

@@ -128,85 +128,79 @@
 
                         <!-- ویدیوها و تصاویر -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                            <!-- ویدیو نمونه تدریس -->
                             <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">عکس پروفایل</label>
-
-                                <div class="flex flex-col items-center">
-                                    <!-- نمایش عکس پروفایل -->
-                                    <div class="relative w-32 h-32 rounded-full overflow-hidden shadow-md border-2 border-gray-200">
-                                        <img id="profilePreview"
-                                             src="{{ $professor->user->profile ? asset($professor->user->profile) : asset('images/default-avatar.png') }}"
-                                             alt="profile"
-                                             class="w-full h-full object-cover">
-                                        <!-- آیکن دوربین -->
-                                        <label for="profileInput" class="absolute bottom-0 right-0 bg-gray-800 bg-opacity-70 text-white p-2 rounded-full cursor-pointer hover:bg-opacity-90 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l1.68-2.68A1 1 0 019.37 4h5.26a1 1 0 01.84.32L17 7h4a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V8a1 1 0 011-1z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </label>
-                                    </div>
-
-                                    <!-- اینپوت فایل -->
-                                    <input type="file" name="profile" id="profileInput" accept="image/*" class="hidden">
-                                    <p class="mt-2 text-xs text-gray-500">فرمت‌های مجاز: JPG, PNG | حداکثر 4MB</p>
-                                </div>
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
+                                    آپلود ویدیو نمونه تدریس
+                                    <input type="file" name="sample_video" accept="video/*" class="hidden">
+                                </label>
+                                @if($professor->sample_video)
+                                    <video controls class="w-full mt-2 rounded-lg shadow-md">
+                                        <source src="{{ asset(old('sample_video', $professor->sample_video)) }}">
+                                    </video>
+                                @endif
                             </div>
 
-                            <!-- اسکریپت پیش‌نمایش -->
-                            <script>
-                                document.getElementById('profileInput').addEventListener('change', function(e) {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = function(ev) {
-                                            document.getElementById('profilePreview').src = ev.target.result;
-                                        }
-                                        reader.readAsDataURL(file);
-                                    }
-                                });
-                            </script>
-
-
+                            <!-- کاور نمونه تدریس -->
                             <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700">ویدیو نمونه تدریس</label>
-                                <div class="mt-2 p-3 border-2 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition">
-                                    @if($professor->sample_video)
-                                        <video controls class="w-full rounded-lg shadow-md">
-                                            <source src="{{ asset($professor->sample_video) }}">
-                                            مرورگر شما از ویدیو پشتیبانی نمی‌کند.
-                                        </video>
-                                    @else
-                                        <p class="text-gray-500 text-sm text-center">هنوز ویدیویی آپلود نشده است</p>
-                                    @endif
-
-                                    <label class="mt-3 flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg cursor-pointer hover:bg-blue-700 transition">
-                                        <i class="fas fa-upload ml-2"></i> انتخاب ویدیو
-                                        <input type="file" name="sample_video" accept="video/*" class="hidden">
-                                    </label>
-                                </div>
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
+                                    آپلود کاور نمونه تدریس
+                                    <input type="file" name="sample_video_cover" accept="image/*" class="hidden">
+                                </label>
+                                @if($professor->sample_video_cover)
+                                    <img src="{{ asset(old('sample_video_cover', $professor->sample_video_cover)) }}" class="mt-2 w-32 h-32 rounded object-cover">
+                                @endif
                             </div>
 
+                            <!-- ویدیو معرفی -->
                             <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700">ویدیو معرفی</label>
-                                <div class="mt-2 p-3 border-2 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition">
-                                    @if($professor->teaching_video)
-                                        <video controls class="w-full rounded-lg shadow-md">
-                                            <source src="{{ asset($professor->teaching_video) }}">
-                                            مرورگر شما از ویدیو پشتیبانی نمی‌کند.
-                                        </video>
-                                    @else
-                                        <p class="text-gray-500 text-sm text-center">هنوز ویدیویی آپلود نشده است</p>
-                                    @endif
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
+                                    آپلود ویدیو معرفی
+                                    <input type="file" name="teaching_video" accept="video/*" class="hidden">
+                                </label>
+                                @if($professor->teaching_video)
+                                    <video controls class="w-full mt-2 rounded-lg shadow-md">
+                                        <source src="{{ asset(old('teaching_video', $professor->teaching_video)) }}">
+                                    </video>
+                                @endif
+                            </div>
 
-                                    <label class="mt-3 flex items-center justify-center px-4 py-2 bg-green-600 text-white text-sm rounded-lg cursor-pointer hover:bg-green-700 transition">
-                                        <i class="fas fa-upload ml-2"></i> انتخاب ویدیو
-                                        <input type="file" name="teaching_video" accept="video/*" class="hidden">
-                                    </label>
-                                </div>
+                            <!-- کاور معرفی -->
+                            <div class="col-span-1">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
+                                    آپلود کاور معرفی
+                                    <input type="file" name="teaching_video_cover" accept="image/*" class="hidden">
+                                </label>
+                                @if($professor->teaching_video_cover)
+                                    <img src="{{ asset(old('teaching_video_cover', $professor->teaching_video_cover)) }}" class="mt-2 w-32 h-32 rounded object-cover">
+                                @endif
+                            </div>
+
+                            <!-- عکس پروفایل -->
+                            <div class="col-span-1">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
+                                    آپلود عکس پروفایل
+                                    <input type="file" name="profile" accept="image/*" id="profileInput" class="hidden">
+                                </label>
+                                <img id="profilePreview" src="{{ asset(old('profile', $professor->profile)) }}" class="mt-2 w-32 h-32 rounded-full object-cover">
                             </div>
 
                         </div>
+
+                        <!-- اسکریپت پیش‌نمایش عکس پروفایل -->
+                        <script>
+                            document.getElementById('profileInput').addEventListener('change', function(e) {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(ev) {
+                                        document.getElementById('profilePreview').src = ev.target.result;
+                                    }
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
 
                         <!-- بخش انتخاب‌ها به صورت کارت/چک‌باکس (بدون دراپ‌داون) -->
                         <div class="space-y-4">

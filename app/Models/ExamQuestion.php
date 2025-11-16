@@ -39,4 +39,9 @@ class ExamQuestion extends Model
     {
         return $this->hasMany(ExamVariant::class , 'exam_question_id');
     }
+    public function answers()
+    {
+        return $this->hasMany(ExamAnswer::class, 'exam_question_id');
+    }
+
 }

@@ -90,7 +90,7 @@
                 <a href="{{route('admin.certificates.index')}}"
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition
                           hover:bg-blue-50 hover:text-blue-600 font-medium group">
-                    <span class="material-icons text-gray-500 group-hover:text-blue-600">وبینار ها</span>
+                    <span class="material-icons text-gray-500 group-hover:text-blue-600">مدارک</span>
                 </a>
             </li>
         </ul>

@@ -14,32 +14,33 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">نام</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">نوع</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">توضیح</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">تاریخ انقضا</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">دفعات مجاز</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">تعداد بخش‌ها</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">مدت زمان</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">ویو</th>
-                    <th class="px-4 py-2 text-right text-sm font-medium text-gray-600">عملیات</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">نام</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">نوع</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">توضیح</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">تاریخ انقضا</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">دفعات مجاز</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">تعداد بخش‌ها</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">مدت زمان</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">ویو</th>
+                    <th class="px-4 py-2 text-center text-sm font-medium text-gray-600">عملیات</th>
                 </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                 @forelse($exams as $exam)
                     <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-2 text-gray-700 font-medium">{{ $exam->name }}</td>
-                        <td class="px-4 py-2 text-gray-700">{{ $exam->type }}</td>
-                        <td class="px-4 py-2 text-gray-500">{{ \Illuminate\Support\Str::words($exam->description, 5, '...') }}</td>
-                        <td class="px-4 py-2 text-gray-700">{{ $exam->expiration }}</td>
-                        <td class="px-4 py-2 text-gray-700">{{ $exam->number_of_attempts }}</td>
-                        <td class="px-4 py-2 text-gray-700">{{ $exam->number_of_sections }}</td>
-                        <td class="px-4 py-2 text-gray-700">{{ $exam?->duration?->format('H:i') }} دقیقه</td>
-                        <td class="px-4 py-2 text-gray-700">{{ $exam->view }}</td>
+                        <td class="px-4 py-2  text-center text-gray-700 font-medium">{{ $exam->name }}</td>
+                        <td class="px-4 py-2 text-center  text-gray-700">{{ $exam->type }}</td>
+                        <td class="px-4 py-2 text-center  text-gray-500">{{ \Illuminate\Support\Str::words($exam->description, 5, '...') }}</td>
+                        <td class="px-4 py-2  text-center text-gray-700">{{ $exam->expiration }}</td>
+                        <td class="px-4 py-2  text-center text-gray-700">{{ $exam->number_of_attempts }}</td>
+                        <td class="px-4 py-2  text-center text-gray-700">{{ $exam->number_of_sections }}</td>
+                        <td class="px-4 py-2  text-center text-gray-700">{{ $exam?->duration?->format('H:i') }} دقیقه</td>
+                        <td class="px-4 py-2  text-center text-gray-700">{{ $exam->view }}</td>
                         <td class="px-4 py-2">
                             <div class="flex gap-2">
                                 <a href="{{ route('admin.exams.show', $exam->id) }}" class="text-blue-600 hover:underline">مشاهده</a>
                                 <a href="{{ route('admin.exams.edit', $exam->id) }}" class="text-gray-600 hover:underline">ویرایش</a>
+                                <a href="{{ route('admin.exams.students', $exam->id) }}" class="text-blue-800 hover:underline">لیست دانش اموزان</a>
                                 <form action="{{ route('admin.exams.destroy', $exam->id) }}" method="POST" onsubmit="return confirm('آیا مطمئن هستید؟');">
                                     @csrf
                                     @method('DELETE')

@@ -66,7 +66,7 @@
                     <td class="px-4 py-2 border text-center">
                         <a href="{{route('admin.professors.show' , $professor->id)}}" class="text-blue-500 hover:text-blue-700">نمایش</a>
                         <a href="{{route('admin.professors.edit' , $professor->id)}}" class="text-gray-50-500 hover:text-blue-700">ویرایش</a>
-                        <form action="# " method="POST" class="inline-block">
+                        <form action="{{route('admin.professors.destroy' , $professor->id)}}" method="POST" class="inline-block">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-700">حذف</button>

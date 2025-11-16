@@ -9,12 +9,49 @@ use App\Models\Exam;
 use App\Models\ExamPart;
 use App\Models\ExamPartMedia;
 use App\Models\ExamPartType;
+use App\Models\ExamQuestion;
+use App\Models\ExamStudent;
 use App\Models\LanguageLevel;
 use App\Models\Skill;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
+    public function updateScore(Request $request, $id)
+    {
+        $request->validate([
+            'score' => 'required|numeric|min:0|max:100',
+        ]);
+
+        $examStudent = ExamStudent::findOrFail($id);
+        $examStudent->score = $request->score;
+        $examStudent->save();
+
+        return response()->json([
+            'message' => 'نمره با موفقیت بروزرسانی شد.',
+            'score'   => $examStudent->score
+        ]);
+    }
+
+    public function studentAnswers($exam_id, $student_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+        $student = Student::findOrFail($student_id);
+        $questions = ExamQuestion::with([
+            'variants.options',
+            'answers' => function ($q) use ($student_id) {
+                $q->where('student_id', $student_id)
+                    ->with(['options.option', 'variant', 'student']);
+            },
+        ])
+            ->where('exams_id', $exam_id)
+            ->get();
+
+        return view('admin.exam.student_answers', compact('exam', 'student', 'questions'));
+    }
+
 
     public function index()
     {

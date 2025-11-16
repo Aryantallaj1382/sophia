@@ -2,7 +2,15 @@
 
 @section('content')
     <div class="p-6 bg-gray-50 min-h-screen">
-
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <ul class="list-disc pr-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-800">📖 ایجاد کتاب جدید</h1>
             <a href="{{ route('admin.books.index') }}"

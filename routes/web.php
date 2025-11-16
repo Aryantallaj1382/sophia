@@ -124,6 +124,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
 // web.php
     Route::get('/exams/{exam}/students', [ExamController::class, 'showStudents'])->name('exams.students');
+    Route::get('/exams/{exam}/students/{student}/answers', [ExamController::class, 'studentAnswers'])->name('exams.students.answers');
+    Route::post('/exam-student/{id}/update-score',
+        [ExamController::class, 'updateScore']
+    )->name('exam-student.update-score');
 
     Route::put('questions/update/{id}', [ExamQuestionController::class, 'q_update'])->name('q_update');
     Route::get('questions/edit/{id}', [ExamQuestionController::class, 'q_edit'])->name('q_edit');
@@ -146,6 +150,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::post('/store', [AdminProfessorController::class, 'store'])->name('store');
         Route::get('/{id}', [AdminProfessorController::class, 'show'])->name('show');
         Route::put('/update/{professor}', [AdminProfessorController::class, 'update'])->name('update');
+        Route::delete('/destroy/{professor}', [AdminProfessorController::class, 'destroy'])->name('destroy');
 
     });
     Route::prefix('admin/professors/{professor}')->name('professorsStory.')->group(function () {

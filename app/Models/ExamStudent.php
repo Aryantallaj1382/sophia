@@ -20,7 +20,7 @@ class ExamStudent extends Model
         'finished_at',
         'expired_at',
         'created_at',
-        ''
+
     ];
 
     protected $casts = [

@@ -31,6 +31,7 @@ class AdminBookController
         return view('admin.book.create');
     }
 
+
     // ذخیره کتاب جدید
     public function store(Request $request)
     {
@@ -40,7 +41,7 @@ class AdminBookController
             'author'        => 'nullable|string|max:255',
             'edition'       => 'nullable|integer|min:1',
             'volume'        => 'nullable|integer|min:1',
-            'topics'        => 'nullable|array',
+            'topics'        => 'nullable|string',
             'book_type'     => 'nullable',
 
             'description'   => 'nullable|string',
@@ -50,6 +51,18 @@ class AdminBookController
             'sample_pages'   => 'nullable|array',
             'sample_pages.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+        if (!empty($data['topics'])) {
+            // اگر JSON درست وارد شده باشد
+            $topics = json_decode($data['topics'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $data['topics'] = $topics;
+            } else {
+                // یا اگر با کاما جدا وارد شده باشد
+                $data['topics'] = array_map('trim', explode(',', $data['topics']));
+            }
+        } else {
+            $data['topics'] = [];
+        }
 
         // مسیر پایه public
         $publicPath = public_path('books');
