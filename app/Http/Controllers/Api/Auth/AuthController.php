@@ -32,6 +32,31 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ], 'login success');
     }
+    public function p_login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user->professor)
+        {
+            return api_response([],'you are not a professor', 400);
+        }
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return api_response([],'email or password is wrong' , 400);
+        }
+        $user->tokens()->delete();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return api_response([
+            'token' => $token,
+            'token_type' => 'Bearer',
+        ], 'login success');
+    }
+
     public function loginOtp(Request $request)
     {
         $request->validate([

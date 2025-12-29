@@ -30,8 +30,16 @@ class StudentDashboardController extends Controller
         $myPlacement = ExamStudent::where('student_id' , $user)->whereRelation('exam', 'type' ,'placement')->count();
         $myFinal = ExamStudent::where('student_id' , $user)->whereRelation('exam', 'type' ,'final')->count();
         $myMock = ExamStudent::where('student_id' , $user)->whereRelation('exam', 'type' ,'mock')->count();
-
-        $myPrivate = PrivateClassReservation::where('user_id' , $user)->where('status' ,'!=', 'pending')->count();
+        $myPrivateSessionsCount = PrivateClassReservation::where('user_id', $user)
+            ->where('status', '!=', 'pending')
+            ->withCount('timeSlots') // تعداد تایم‌اسلات هر رزرو رو اضافه می‌کنه
+            ->get()
+            ->sum('time_slots_count'); // جمع کل تایم‌اسلات‌ها
+        $myPrivate = PrivateClassReservation::where('user_id', $user)
+            ->where('status', '!=', 'pending')
+            ->withCount('timeSlots') // تعداد تایم‌اسلات هر رزرو رو اضافه می‌کنه
+            ->get()
+            ->sum('time_slots_count');
         $myWebinar = WebinarReservation::where('user_id' , $user)->where('status' ,'!=', 'pending')->count();
         $myGroup = GroupClassReservation::where('user_id' , $user)->where('status' ,'!=', 'pending')->count();
 

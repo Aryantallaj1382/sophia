@@ -69,10 +69,9 @@
                 </div>
             </div>
 
-            {{-- ردیف ۴: میزان تخفیف + تعداد کلاس --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block font-semibold mb-2">میزان تخفیف</label>
+                    <label class="block font-semibold mb-2">پول ذخیره شده</label>
                     <input type="number" name="discount_amount" value="{{ old('discount_amount') }}"
                            class="w-full border rounded-lg px-3 py-2">
                 </div>

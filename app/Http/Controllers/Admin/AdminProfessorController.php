@@ -198,10 +198,18 @@ class AdminProfessorController extends Controller
             'mobile' => 'nullable|string|max:20',
             'years_of_experience' => 'nullable|integer|min:0',
             'bio' => 'nullable|string',
+            'trial' => 'nullable|string',
+            'voov_link' => 'nullable|string',
+            'classin_link' => 'nullable|string',
+            'zoom_link' => 'nullable|string',
+            'teams' => 'nullable|string',
+            'placement' => 'nullable|string',
             'password' => 'nullable',
             'profile' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'sample_video' => 'nullable|mimetypes:video/mp4,video/mov,video/avi|max:20000',
-            'teaching_video' => 'nullable|mimetypes:video/mp4,video/mov,video/avi|max:20000',
+            'sample_video' => 'nullable',
+            'teaching_video' => 'nullable',
+            'sample_video_cover' => 'nullable',
+            'teaching_video_cover' => 'nullable',
         ]);
 
         $userData = [
@@ -222,8 +230,21 @@ class AdminProfessorController extends Controller
             'is_native' => $request->has('is_native'),
             'gender' => $request->gender,
             'birth_date' => $request->birth_date,
+            'placement' => $request->placement,
+            'trial' => $request->trial,
+            'teams' => $request->teams,
+            'zoom_link' => $request->zoom_link,
+            'classin_link' => $request->classin_link,
+            'voov_link' => $request->voov_link,
         ]);
 
+        // حذف عکس پروفایل
+        if ($request->has('delete_profile') && $request->delete_profile == '1') {
+            if ($professor->user->profile && file_exists(public_path($professor->user->profile))) {
+                unlink(public_path($professor->user->profile));
+            }
+            $professor->user->update(['profile' => null]);
+        }
 
 // پروفایل
         if ($request->hasFile('profile')) {
@@ -232,13 +253,20 @@ class AdminProfessorController extends Controller
             if ($professor->user->profile && file_exists(public_path($professor->user->profile))) {
                 unlink(public_path($professor->user->profile));
             }
-
             $destinationPath = public_path('professors/profile');
             if (!file_exists($destinationPath)) mkdir($destinationPath, 0755, true);
 
             $fileName = time() . '_' . $file->getClientOriginalName();
             $file->move($destinationPath, $fileName);
             $professor->user->update(['profile' => 'professors/profile/' . $fileName]);
+        }
+
+        // حذف ویدیو نمونه تدریس
+        if ($request->has('delete_sample_video') && $request->delete_sample_video == '1') {
+            if ($professor->sample_video && file_exists(public_path($professor->sample_video))) {
+                unlink(public_path($professor->sample_video));
+            }
+            $professor->sample_video = null;
         }
 
 // ویدیو نمونه تدریس
@@ -257,6 +285,14 @@ class AdminProfessorController extends Controller
             $professor->sample_video = 'professors/sample_video/' . $fileName;
         }
 
+        // حذف ویدیو معرفی
+        if ($request->has('delete_teaching_video') && $request->delete_teaching_video == '1') {
+            if ($professor->teaching_video && file_exists(public_path($professor->teaching_video))) {
+                unlink(public_path($professor->teaching_video));
+            }
+            $professor->teaching_video = null;
+        }
+
 // ویدیو معرفی
         if ($request->hasFile('teaching_video')) {
             $file = $request->file('teaching_video');
@@ -273,6 +309,14 @@ class AdminProfessorController extends Controller
             $professor->teaching_video = 'professors/teaching_video/' . $fileName;
         }
 
+        // حذف کاور ویدیوی نمونه تدریس
+        if ($request->has('delete_sample_video_cover') && $request->delete_sample_video_cover == '1') {
+            if ($professor->sample_video_cover && file_exists(public_path($professor->sample_video_cover))) {
+                unlink(public_path($professor->sample_video_cover));
+            }
+            $professor->sample_video_cover = null;
+        }
+
 // کاور ویدیوی نمونه تدریس
         if ($request->hasFile('sample_video_cover')) {
             $file = $request->file('sample_video_cover');
@@ -287,6 +331,14 @@ class AdminProfessorController extends Controller
             $fileName = time() . '_' . $file->getClientOriginalName();
             $file->move($destinationPath, $fileName);
             $professor->sample_video_cover = 'professors/images/' . $fileName;
+        }
+
+        // حذف کاور ویدیوی معرفی
+        if ($request->has('delete_teaching_video_cover') && $request->delete_teaching_video_cover == '1') {
+            if ($professor->teaching_video_cover && file_exists(public_path($professor->teaching_video_cover))) {
+                unlink(public_path($professor->teaching_video_cover));
+            }
+            $professor->teaching_video_cover = null;
         }
 
 // کاور ویدیوی معرفی
@@ -321,7 +373,6 @@ class AdminProfessorController extends Controller
         }
         return redirect()->route('admin.professors.edit', $professor)->with('success', 'اطلاعات استاد با موفقیت به‌روزرسانی شد.');
     }
-
     public function destroy($id)
     {
         // پیدا کردن استاد

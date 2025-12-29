@@ -20,7 +20,7 @@
                 </form>
 
                 {{-- ویرایش --}}
-                <a href="#"
+                <a href="{{ route('admin.books.edit',$book) }}"
                    class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-2xl shadow-md transition transform hover:scale-105">
                     ویرایش
                 </a>

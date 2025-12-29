@@ -78,13 +78,24 @@
                             <!-- فایل‌ها -->
                             <div class="col-md-12">
                                 <label class="form-label fw-bold">فایل‌ها (اختیاری)</label>
+
                                 <div id="mediaInputs">
-                                    <div class="input-group mb-2">
-                                        <input dir="auto" type="file" name="media[]" class="form-control">
-                                        <input dir="auto" type="text" name="media_description[]" class="form-control" placeholder="توضیح فایل (اختیاری)">
+                                    <div class="media-item mb-3 border rounded p-2">
+                                        <input type="file" name="media[]" class="form-control media-input mb-2">
+                                        <input type="text" name="media_description[]" class="form-control mb-2" placeholder="توضیح فایل (اختیاری)">
+
+                                        <!-- Preview -->
+                                        <div class="media-preview mb-2"></div>
+
+                                        <button type="button" class="btn btn-sm btn-danger remove-media">
+                                            حذف فایل
+                                        </button>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-info mt-2" id="addMedia">افزودن فایل دیگر</button>
+
+                                <button type="button" class="btn btn-sm btn-info mt-2" id="addMedia">
+                                    افزودن فایل دیگر
+                                </button>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-success mt-3 w-100 fw-bold">اضافه کردن بخش</button>
@@ -239,19 +250,39 @@
                                             <div class="col-md-12">
                                                 <label class="form-label fw-bold">فایل‌ها (اختیاری)</label>
                                                 <div id="mediaInputsEdit{{ $part->id }}">
-                                                    @if($part->media->count())
-                                                        @foreach($part->media as $media)
-                                                            <div class="input-group mb-2">
-                                                                <a href="{{ asset('storage/' . $media->path) }}" target="_blank" class="form-control">{{ $media->path }}</a>
-                                                                <input dir="auto" type="text" name="media_description[]" class="form-control" value="{{ $media->description }}" placeholder="توضیح فایل (اختیاری)">
+                                                    @foreach($part->media as $media)
+                                                        <div class="media-item mb-3 border rounded p-2">
+                                                            <input type="hidden" name="existing_media_ids[]" value="{{ $media->id }}">
+
+                                                            <div class="media-preview mb-2">
+                                                                @if(Str::startsWith($media->mime_type, 'image'))
+                                                                    <img src="{{ asset('storage/'.$media->path) }}" class="img-fluid rounded" style="max-height:150px">
+                                                                @elseif(Str::startsWith($media->mime_type, 'audio'))
+                                                                    <audio controls src="{{ asset('storage/'.$media->path) }}"></audio>
+                                                                @elseif(Str::startsWith($media->mime_type, 'video'))
+                                                                    <video controls style="max-height:150px">
+                                                                        <source src="{{ asset('storage/'.$media->path) }}">
+                                                                    </video>
+                                                                @else
+                                                                    <a href="{{ asset('storage/'.$media->path) }}" target="_blank">
+                                                                        📄 {{ basename($media->path) }}
+                                                                    </a>
+                                                                @endif
                                                             </div>
-                                                        @endforeach
-                                                    @else
-                                                        <div class="input-group mb-2">
-                                                            <input type="file" name="media[]" class="form-control">
-                                                            <input type="text" name="media_description[]" class="form-control" placeholder="توضیح فایل (اختیاری)">
+
+                                                            <input type="text"
+                                                                   name="media_description_existing[{{ $media->id }}]"
+                                                                   class="form-control mb-2"
+                                                                   value="{{ $media->description }}"
+                                                                   placeholder="توضیح فایل">
+
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-danger remove-existing-media"
+                                                                    data-id="{{ $media->id }}">
+                                                                حذف فایل
+                                                            </button>
                                                         </div>
-                                                    @endif
+                                                    @endforeach
                                                 </div>
                                                 <button type="button" class="btn btn-sm btn-info mt-2 addMediaEdit" data-container="mediaInputsEdit{{ $part->id }}">
                                                     افزودن فایل دیگر
@@ -278,67 +309,146 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const select = document.getElementById('examPartTypeSelect');
-        const passageDivs = document.querySelectorAll('.passagee');
+    document.addEventListener("DOMContentLoaded", function () {
 
-        function togglePassage() {
-            const selectedText = select.options[select.selectedIndex].text.toLowerCase();
+        /* =====================================================
+           1. نمایش/مخفی کردن فیلدهای Passage در Reading (هر دو مدال)
+        ===================================================== */
+        document.addEventListener('change', function (e) {
+            if (!e.target.matches('select[name="exam_part_type_id"]')) return;
+
+            const modal = e.target.closest('.modal');
+            if (!modal) return;
+
+            const passageDivs = modal.querySelectorAll('.passagee');
+            const selectedText = e.target.options[e.target.selectedIndex].text.toLowerCase();
+
             passageDivs.forEach(div => {
-                div.style.display = selectedText === 'reading' ? 'block' : 'none';
+                div.style.display = selectedText.includes('reading') ? 'block' : 'none';
             });
-        }
-        select.addEventListener('change', togglePassage);
-
-        // افزودن فایل داینامیک
-        document.getElementById('addMedia').addEventListener('click', () => {
-            const mediaInputs = document.getElementById('mediaInputs');
-            const div = document.createElement('div');
-            div.className = 'input-group mb-2';
-            div.innerHTML = `
-            <input dir="auto" type="file" name="media[]" class="form-control">
-            <input dir="auto" type="text" name="media_description[]" class="form-control" placeholder="توضیح فایل (اختیاری)">
-        `;
-            mediaInputs.appendChild(div);
         });
 
-        // باز کردن مدال بانک مدیا بدون بستن مدال افزودن بخش
-        const mediaBankBtn = document.getElementById('openMediaBank');
-        mediaBankBtn.addEventListener('click', () => {
-            const mediaModalEl = document.getElementById('mediaBankModal');
-            const mediaModal = new bootstrap.Modal(mediaModalEl, {
-                backdrop: true,
-                keyboard: false
-            });
-            mediaModal.show();
-        });
-
-        // انتخاب مدیا و افزودن به فرم بدون بستن مدال اصلی
-        document.querySelectorAll('.selectMediaBtn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const path = this.dataset.path;
-                const description = this.dataset.description;
-
+        /* =====================================================
+           2. افزودن فایل جدید - در مدال افزودن
+        ===================================================== */
+        document.addEventListener('click', function (e) {
+            if (e.target.id === 'addMedia') {
                 const mediaInputs = document.getElementById('mediaInputs');
-                const div = document.createElement('div');
-                div.className = 'input-group mb-2';
-                div.innerHTML = `
-                <input type="hidden" name="selected_media[]" value="${path}">
-                <input type="text" class="form-control" value="${path}" readonly>
-                <input type="text" name="selected_media_description[]" class="form-control" value="${description}">
-                <button type="button" class="btn btn-danger removeMedia">حذف</button>
-            `;
-                mediaInputs.appendChild(div);
+                if (!mediaInputs) return;
 
-                div.querySelector('.removeMedia').addEventListener('click', () => div.remove());
-
-                // فقط مدال بانک مدیا را ببند
-                const mediaModalEl = document.getElementById('mediaBankModal');
-                const mediaModal = bootstrap.Modal.getInstance(mediaModalEl);
-                mediaModal.hide();
-            });
+                mediaInputs.insertAdjacentHTML('beforeend', `
+                    <div class="media-item mb-3 border rounded p-2">
+                        <input type="file" name="media[]" class="form-control media-input mb-2">
+                        <input type="text" name="media_description[]" class="form-control mb-2" placeholder="توضیح فایل (اختیاری)">
+                        <div class="media-preview mb-2"></div>
+                        <button type="button" class="btn btn-sm btn-danger remove-media">حذف فایل</button>
+                    </div>
+                `);
+            }
         });
+
+        /* =====================================================
+           3. افزودن فایل جدید - در مدال‌های ویرایش (چندین مدال)
+        ===================================================== */
+        document.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('addMediaEdit')) return;
+
+            const containerId = e.target.dataset.container;
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.insertAdjacentHTML('beforeend', `
+                <div class="media-item mb-3 border rounded p-2">
+                    <input type="file" name="media[]" class="form-control media-input mb-2">
+                    <input type="text" name="media_description[]" class="form-control mb-2" placeholder="توضیح فایل (اختیاری)">
+                    <div class="media-preview mb-2"></div>
+                    <button type="button" class="btn btn-sm btn-danger remove-media">حذف فایل</button>
+                </div>
+            `);
+        });
+
+        /* =====================================================
+           4. پیش‌نمایش فایل - کار کردن در هر دو مدال (افزودن و ویرایش)
+        ===================================================== */
+        document.addEventListener('change', function (e) {
+            if (!e.target.classList.contains('media-input')) return;
+
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const mediaItem = e.target.closest('.media-item');
+            if (!mediaItem) return;
+
+            const preview = mediaItem.querySelector('.media-preview');
+            if (!preview) return;
+
+            preview.innerHTML = '';
+
+            if (file.type.startsWith('image/')) {
+                preview.innerHTML = `<img src="${URL.createObjectURL(file)}" class="img-fluid rounded" style="max-height:150px;">`;
+            } else if (file.type.startsWith('audio/')) {
+                preview.innerHTML = `<audio controls><source src="${URL.createObjectURL(file)}"></audio>`;
+            } else if (file.type.startsWith('video/')) {
+                preview.innerHTML = `<video controls style="max-height:150px;"><source src="${URL.createObjectURL(file)}"></video>`;
+            } else {
+                preview.innerHTML = `<div class="alert alert-secondary p-2">📄 ${file.name}</div>`;
+            }
+        });
+
+        /* =====================================================
+           5. حذف فایل جدید (در هر دو مدال افزودن و ویرایش)
+        ===================================================== */
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-media')) {
+                e.target.closest('.media-item')?.remove();
+            }
+        });
+
+        /* =====================================================
+           6. حذف فایل موجود (فقط در مدال ویرایش)
+        ===================================================== */
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-existing-media')) {
+                e.target.closest('.media-item')?.remove();
+            }
+        });
+
+        /* =====================================================
+           7. باز کردن بانک مدیا و انتخاب فایل
+        ===================================================== */
+        document.getElementById('openMediaBank')?.addEventListener('click', () => {
+            new bootstrap.Modal(document.getElementById('mediaBankModal')).show();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.classList.contains('selectMediaBtn')) return;
+
+            const path = e.target.dataset.path;
+            const description = e.target.dataset.description ?? '';
+
+            const mediaInputs = document.getElementById('mediaInputs');
+            if (!mediaInputs) return;
+
+            mediaInputs.insertAdjacentHTML('beforeend', `
+                <div class="input-group mb-2">
+                    <input type="hidden" name="selected_media[]" value="${path}">
+                    <input type="text" class="form-control" value="${path}" readonly>
+                    <input type="text" name="selected_media_description[]" class="form-control" value="${description}">
+                    <button type="button" class="btn btn-danger removeMedia">حذف</button>
+                </div>
+            `);
+
+            bootstrap.Modal.getInstance(document.getElementById('mediaBankModal'))?.hide();
+        });
+
+        // حذف فایل انتخاب شده از بانک مدیا
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('removeMedia')) {
+                e.target.closest('.input-group')?.remove();
+            }
+        });
+
     });
 </script>
+
 

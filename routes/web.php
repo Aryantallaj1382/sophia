@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminPrivateClassListController;
 use App\Http\Controllers\Admin\AdminProfessorBookController;
 use App\Http\Controllers\Admin\AdminProfessorController;
 use App\Http\Controllers\Admin\AdminProfessorStoryController;
+use App\Http\Controllers\Admin\AdminRegisterUserController;
 use App\Http\Controllers\Admin\AdminSliderController;
 use App\Http\Controllers\Admin\AdminStoryController;
 use App\Http\Controllers\Admin\AdminTicketController;
@@ -69,11 +70,15 @@ Route::middleware('guest:web')->group(function() {
         Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
         Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     });
+
+
+
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('welcome');
     Route::get('/tickets', [AdminTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/{id}', [AdminTicketController::class, 'show'])->name('tickets.show');
     Route::post('/tickets/{id}/reply', [AdminTicketController::class, 'reply'])->name('tickets.reply');
+    Route::resource('/user-plans', \App\Http\Controllers\Admin\UserPlanController::class);
 
     Route::delete('/stories/{story}', [AdminStoryController::class, 'destroy'])->name('stories.destroy');
 
@@ -85,6 +90,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
     Route::get('/conversations', [ConversationController::class, 'index'])->name('conversations.index');
     Route::get('/conversations/{id}', [ConversationController::class, 'show'])->name('conversations.show');
+    Route::delete('/conversations/{id}', [ConversationController::class, 'destroy'])->name('conversations.delete');
     Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
     // فرم ایجاد آزمون
     Route::get('/exams/create', [ExamController::class, 'create'])->name('exams.create');
@@ -122,6 +128,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     // حذف آزمون
     Route::delete('/exams/{id}', [ExamController::class, 'destroy'])->name('exams.destroy');
 
+
+
+
 // web.php
     Route::get('/exams/{exam}/students', [ExamController::class, 'showStudents'])->name('exams.students');
     Route::get('/exams/{exam}/students/{student}/answers', [ExamController::class, 'studentAnswers'])->name('exams.students.answers');
@@ -153,6 +162,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::delete('/destroy/{professor}', [AdminProfessorController::class, 'destroy'])->name('destroy');
 
     });
+
     Route::prefix('admin/professors/{professor}')->name('professorsStory.')->group(function () {
         Route::get('stories', [AdminProfessorStoryController::class, 'index'])->name('index');
         Route::post('stories', [AdminProfessorStoryController::class, 'store'])->name('store');
@@ -166,7 +176,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
 
     });
-
+    Route::get('/students/create', [AdminRegisterUserController::class, 'create'])->name('students.create');
+    Route::get('/students/edit/{student}', [AdminRegisterUserController::class, 'edit'])->name('students.edit');
+    Route::put('/students/update/{student}', [AdminRegisterUserController::class, 'update'])->name('students.update');
+    Route::post('/students/register', [AdminRegisterUserController::class, 'store'])->name('students.register');
 
     Route::prefix('group_class')->name('group_class.')->group(function () {
         Route::get('/', [AdminGroupClassController::class, 'index'])->name('index');
@@ -176,6 +189,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::post('/store', [AdminGroupClassController::class, 'store'])->name('store');
         Route::get('/edit/{groupClass}', [AdminGroupClassController::class, 'edit'])->name('edit');
         Route::put('/update/{groupClass}', [AdminGroupClassController::class, 'update'])->name('update');
+        Route::delete('/delete/{groupClass}', [AdminGroupClassController::class, 'delete'])->name('delete');
         Route::put('/updateSchedule/{schedule}', [AdminGroupClassController::class, 'updateSchedule'])->name('updateSchedule');
 
 
@@ -198,6 +212,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::delete('/sliders/{id}', [AdminSliderController::class, 'destroy'])->name('sliders.destroy');
 
 
+    Route::put('/private-classes/{id}/update', [AdminPrivateClassListController::class, 'update'])
+        ->name('private-classes.update');
 
     Route::prefix('private_list')->name('private-classes.')->group(function () {
         Route::get('/', [AdminPrivateClassListController::class, 'index'])->name('index');

@@ -6,20 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    protected $fillable = [
-        'name',
-        'title_file',
-        'author',
-        'edition',
-        'volume',
-        'topics',
-        'description',
-        'image',
-        'view_count',
-        'book_type',
-        'video',
-        'file',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'topics' => 'array',
@@ -36,6 +23,14 @@ class Book extends Model
     }
 
     public function getImageAttribute($value)
+    {
+        return $value ? url('public/' . $value) : null;
+    }
+    public function getFileAttribute($value)
+    {
+        return $value ? url('public/' . $value) : null;
+    }
+    public function getVideoAttribute($value)
     {
         return $value ? url('public/' . $value) : null;
     }

@@ -27,7 +27,7 @@ class AdminPlanController extends Controller
             'placement_test' => 'تست تعیین سطح',
             'mock_test' => 'آزمون شبیه‌سازی',
             'final_exam' => 'آزمون نهایی',
-            'exam' => 'امتحان',
+            'certificate' => 'مدارک',
         ];
 
         return view('admin.plans.index', compact('plans', 'planTypes', 'type'));
@@ -41,7 +41,7 @@ class AdminPlanController extends Controller
             'placement_test' => 'تست تعیین سطح',
             'mock_test' => 'آزمون شبیه‌سازی',
             'final_exam' => 'آزمون نهایی',
-            'exam' => 'امتحان',
+            'certificate' => 'مدارک',
         ];
 
         return view('admin.plans.create', compact('planTypes'));
@@ -52,7 +52,7 @@ class AdminPlanController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'plan_type' => 'required|in:one_to_one,group,webinar,placement_test,mock_test,final_exam,exam',
+            'plan_type' => 'required|in:one_to_one,group,webinar,placement_test,mock_test,final_exam,exam,certificate',
             'color' => 'required|string|max:20',
             'price' => 'required|numeric|min:0',
             'original_price' => 'required|numeric|min:0',

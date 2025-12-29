@@ -242,28 +242,53 @@ PrivateClassController extends Controller
 
     public function showPrivate(Request $request, $id)
     {
+
         $professor = Professor::find($id);
+        updateOpenSlots();
+        $lang = $request->header('X-Language', 'en'); // مثلا 'ch' برای چینی
 
         $professorSubgoals = $professor->learningGoals;
         $point = [];
-        foreach ($professorSubgoals as $learningGoal) {
-            $subgoal = $learningGoal->subgoal;
-            if (!$subgoal || !$subgoal->goal) {
-                continue;
+        if ($lang == 'en')
+        {
+            foreach ($professorSubgoals as $learningGoal) {
+                $subgoal = $learningGoal->subgoal;
+                if (!$subgoal || !$subgoal->goal) {
+                    continue;
+                }
+                $goal = $subgoal->goal;
+                if (!isset($point[$goal->title])) {
+                    $point[$goal->title] = [];
+                }
+                $point[$goal->title][$subgoal->sub][] = $subgoal->title;
             }
-            $goal = $subgoal->goal;
-            if (!isset($point[$goal->title])) {
-                $point[$goal->title] = [];
-            }
-            $point[$goal->title][$subgoal->sub][] = $subgoal->title;
         }
-        $lang = $request->header('X-Language', 'en'); // مثلا 'ch' برای چینی
+        else{
+            foreach ($professorSubgoals as $learningGoal) {
+                $subgoal = $learningGoal->subgoal;
+                if (!$subgoal || !$subgoal->goal) {
+                    continue;
+                }
+                $goal = $subgoal->goal;
+                if (!isset($point[$goal->title_ch])) {
+                    $point[$goal->title_ch] = [];
+                }
+                $point[$goal->title_ch][$subgoal->sub][] = $subgoal->title_ch;
+            }
+
+        }
+
 
         $accents = $professor->accents()->get()->map(fn($item) => $lang === 'zh' ? ($item->title_ch ?? $item->title) : $item->title
         )->toArray();
 
-        $ageGroups = $professor->ageGroups()->get()->map(fn($item) => $lang === 'zh' ? ($item->title_ch ?? $item->title) : $item->title
-        )->toArray();
+        $ageGroups = $professor->ageGroups
+            ->map(fn ($item) => $lang === 'zh'
+                ? ($item->title_ch ?: $item->title)
+                : $item->title
+            )
+            ->values()
+            ->toArray();
 
         $languageLevels = $professor->languageLevels()->get()->map(fn($item) => $lang === 'zh' ? ($item->title_ch ?? $item->title) : $item->title
         )->toArray();
@@ -312,8 +337,9 @@ PrivateClassController extends Controller
             'language_levels' => $languageLevels,
             'sample_video' => $professor->sample_video,
             'view_count' => (int)$professor->view_count,
-            'experience' => $professor->created_at,
+            'experience' => $professor->years_of_experience .' years',
             'point' => $point,
+            'bio' =>$professor->bio,
             'group' => $group,
             'story' => $story,
             'webinar' => $webinar,
@@ -334,8 +360,9 @@ PrivateClassController extends Controller
             'teaching_video_cover' => $professor->teaching_video_cover,
             'available' => $professor->nearest_open_time,
 
-            'placement' => 1,
-            'trial' => 2,
+            'placement' => $professor->placement,
+            'trial' => $professor->trial,
+
             'number_student' => 0,
             'number_webinar' => 0,
             'number_group' => 0,
@@ -550,12 +577,13 @@ PrivateClassController extends Controller
 
             ],
             'accents' => $professor->accents->makeHidden('pivot'),
-            'language_levels' => $professor->languageLevels->makeHidden('pivot'),
+            'language_levels' => $professor->languageLevels->makeHidden('pivot')->where('id','!=',1)->values(),
             'platforms' => $professor->platforms->makeHidden('pivot'),
             'skills' => $professor->skills->makeHidden('pivot'),  // اضافه کردن مهارت‌ها به خروجی
 
         ], 'ok');
     }
+
 
     public function store(Request $request)
     {
@@ -572,7 +600,8 @@ PrivateClassController extends Controller
             'skill_id' => 'nullable',
         ]);
         $user = auth()->user()->student;
-        $validated['user_id'] = $user->id;
+        $user_x = auth()->user();
+        $validated['user_id'] = $user_x->id;
 
         if ($user && $user->birth_date) {
             $age = \Carbon\Carbon::parse($user->birth_date)->age;
@@ -979,7 +1008,7 @@ PrivateClassController extends Controller
         $level = $request->input('language_level_id');
         $skill = $request->input('skill_id');
         $user = auth()->user()->student;
-        $age = $user->age_group;
+        $age = $user?->age_group;
         $professors = \App\Models\Professor::query();
 
         if ($age) {

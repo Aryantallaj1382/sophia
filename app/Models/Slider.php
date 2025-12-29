@@ -6,8 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Slider extends Model
 {
-    protected $fillable = ['image', 'link' , 'mobile_image'];
+    protected $fillable = ['image', 'link' , 'mobile_image','tablet_image'];
     public function getMobileImageAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+    }
+    public function getTabletImageAttribute($value)
     {
         return $value ? url('public/'.$value) : null;
     }

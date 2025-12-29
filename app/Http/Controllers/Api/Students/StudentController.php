@@ -38,6 +38,7 @@ class StudentController extends Controller
          'last_name' => $students->last_name,
          'email' => $students->email,
          'user_id' => $students->user_id,
+         'id' => $students->id,
          'phone' => $students->phone,
          'we_chat' => $students->we_chat,
          'nickname' => $students->nickname,
@@ -76,14 +77,17 @@ class StudentController extends Controller
 
         $student->update($request->except('learning_subgoals'));
 
+        if ($request->hasFile('profile')) { // فقط اگر فایل جدید ارسال شده باشد
+            // اگر قبلا فایلی داشت و واقعی بود حذف کن
+            if ($user->profile && is_file(public_path($user->profile))) {
+                unlink(public_path($user->profile));
+            }
 
-        if ($user->profile) {
-            Storage::delete('public/profiles' . basename($user->profile));
+            $imageName = time() . '.' . $request->file('profile')->extension();
+            $request->file('profile')->move(public_path('profiles'), $imageName);
+            $user->profile = 'profiles/' . $imageName;
+            $user->save();
         }
-        $imageName = time() . '.' . $request->profile->extension();
-        $request->profile->move(public_path('profiles'), $imageName);
-        $user->profile = 'profiles/' . $imageName;
-        $user->save();
 
 
         if ($request->has('learning_subgoals')) {

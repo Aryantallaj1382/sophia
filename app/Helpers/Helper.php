@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ProfessorTimeSlot;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\JsonResponse;
 
@@ -134,4 +135,18 @@ function normalize_filename(string $filename): string
     ];
 
     return strtr($filename, $replacements);
+}
+function updateOpenSlots()
+{
+    $slots = ProfessorTimeSlot::doesntHave('privetClassReservations')->get();
+
+    foreach ($slots as $slot) {
+        $slot->status = 'open';
+        $slot->save();
+    }
+
+    return response()->json([
+        'message' => 'Time slots updated successfully!',
+        'updated_count' => count($slots)
+    ]);
 }

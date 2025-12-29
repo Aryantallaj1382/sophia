@@ -22,7 +22,7 @@ class MainPageController extends Controller
 
             ];
         });
-        $slider = Slider::latest()->take(8)->get()->map(function ($slider) {
+        $slider = Slider::latest()->take(20)->get()->map(function ($slider) {
             return [
                 'id' => $slider->id,
                 'image' => $slider->image,

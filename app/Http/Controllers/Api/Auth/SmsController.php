@@ -30,20 +30,20 @@ class SmsController extends Controller
         $cacheKey = 'otp:' . $identifier;
 
         $cachedOtp = Cache::get($cacheKey);
-        $cooldown = 120;
-
-        if ($cachedOtp && isset($cachedOtp['sent_at'])) {
-            $sentAt = \Carbon\Carbon::parse($cachedOtp['sent_at']);
-            $secondsPassed = now()->diffInSeconds($sentAt);
-            $remaining = max(0,  (int)$cooldown - (- (int)$secondsPassed));
-
-            if ($remaining > 0) {
-                return response()->json([
-                    'remind' => (int)$remaining, // مقدار زمان باقی‌مانده
-                    'message' => "Please try again after {$remaining} seconds."
-                ]);
-            }
-        }
+//        $cooldown = 120;
+//
+//        if ($cachedOtp && isset($cachedOtp['sent_at'])) {
+//            $sentAt = \Carbon\Carbon::parse($cachedOtp['sent_at']);
+//            $secondsPassed = now()->diffInSeconds($sentAt);
+//            $remaining = max(0,  (int)$cooldown - (- (int)$secondsPassed));
+//
+//            if ($remaining > 0) {
+//                return response()->json([
+//                    'remind' => (int)$remaining, // مقدار زمان باقی‌مانده
+//                    'message' => "Please try again after {$remaining} seconds."
+//                ]);
+//            }
+//        }
 
 
 
@@ -64,17 +64,17 @@ class SmsController extends Controller
                 Mail::to($data['email'])->send(new OtpMail(['code' => $code]));
                 $responseMessages['email'] = 'The verification code has been sent to your email.';
                 $responseMessages['remind'] = 120;
+                $responseMessages['code'] = $code;
             }
         } catch (Throwable $e) {
             Log::error('OTP Mail Error: ' . $e->getMessage());
             return response()->json([
-                'message' => 'Failed to send the verification code. Please try again.',
+                'message' =>  $e->getMessage(),
             ], 500);
         }
 
         return response()->json($responseMessages, 200);
     }
-
 
 
 }

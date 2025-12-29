@@ -21,8 +21,8 @@ class WebinarClassController extends Controller
             return [
                 'id' => $item->id,
                 'image' => $item->image,
-                'time' => $item->time,
-                'date' => $item->date,
+                'time' => $item->time?->format('H:i'),
+                'date' => $item->date?->format('m/d'),
                 'name' => $item->subject->title,
                 'professor' => $item->professor->name,
                 'profile' => $item->professor->user->profile
@@ -36,7 +36,7 @@ class WebinarClassController extends Controller
         $return = [
             'id' => $class->id,
             'name' => $class->name,
-            'topic'=>null,
+            'topic'=> $class->subject?->title,
             'image' => $class->image,
             'max_capacity' => $class->max_capacity,
             'start_date' => $class->date ? \Carbon\Carbon::parse($class->date)->format('j F') : null,
@@ -73,7 +73,8 @@ class WebinarClassController extends Controller
         $reserve = Webinar::find($id);
         $user  = auth()->user();
         $user_plan = UserPlan::where('user_id', $user->id)->where('is_active', 1)
-            ->where('class_count','>',0)->where('expires_at', '>=', Carbon::now())->first();
+            ->where('class_count','>',0)->where('expires_at', '>=', Carbon::now())
+            ->whereRelation('plan' , 'plan_type' , 'webinar')->first();
         $days_left = null;
         $hours_left = null;
         if ($user_plan) {

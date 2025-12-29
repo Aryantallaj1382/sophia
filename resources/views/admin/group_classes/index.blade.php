@@ -32,6 +32,12 @@
                                class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition">
                                 مشاهده
                             </a>
+                            <form action="{{ route('admin.group_class.delete', $class) }}"
+                                  method="POST" class="d-inline" onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger">حذف</button>
+                            </form>
                             <a href="{{ route('admin.group_class.edit', $class) }}"
                                class="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600 transition">
                                 ویرایش

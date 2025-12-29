@@ -20,6 +20,7 @@ class AdminSliderController
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'mobile_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'tablet_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'link'  => 'nullable|url',
         ]);
 
@@ -34,11 +35,16 @@ class AdminSliderController
         $request->file('image')->move($destinationPath, $fileName);
 
         $fileName1 = time() . '_' . uniqid() . '.' . $request->file('mobile_image')->getClientOriginalExtension();
-        $request->file('mobile_image')->move($destinationPath, $fileName);
+        $request->file('mobile_image')->move($destinationPath, $fileName1);
+
+
+        $fileName2 = time() . '_' . uniqid() . '.' . $request->file('tablet_image')->getClientOriginalExtension();
+        $request->file('tablet_image')->move($destinationPath, $fileName2);
 
         Slider::create([
-            'image' => 'sliders/' . $fileName, // مسیر نسبی برای نمایش
-            'mobile_image' => 'sliders/' . $fileName1, // مسیر نسبی برای نمایش
+            'image' => 'sliders/' . $fileName,
+            'mobile_image' => 'sliders/' . $fileName1,
+            'tablet_image' => 'sliders/' . $fileName1,
             'link'  => $request->link,
         ]);
 

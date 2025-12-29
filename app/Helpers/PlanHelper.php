@@ -22,7 +22,8 @@ class PlanHelper
             ->where('expires_at', '>=', Carbon::now())
             ->first();
 
-        if (!$userPlan) {
+
+            if (!$userPlan) {
             return ['success' => false, 'message' => 'The user does not have an active plan.'];
         }
 
@@ -58,7 +59,7 @@ class PlanHelper
                     'description' => $request->description ?? null,
                     'status' => 'approved',
                 ]);
-            case 'exam':
+            case 'mock_test':
                 $exam = Exam::find($id);
                 $hours = (int) $exam->duration->format('H'); // ساعت
                 $minutes = (int) $exam->duration->format('i'); // دقیقه

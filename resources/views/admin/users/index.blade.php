@@ -3,6 +3,12 @@
 @section('title', 'مدیریت کاربران')
 
 @section('content')
+    <div class="flex justify-start md:justify-end">
+        <a href="{{ route('admin.students.create') }}"
+           class="bg-green-500 hover:bg-green-600 text-white p-2 rounded">
+            ایجاد زبان آموز جدید
+        </a>
+    </div>
     <div class="container py-4" dir="rtl">
         <h3 class="text-2xl font-bold mb-4">👥 لیست کاربران</h3>
 
@@ -12,6 +18,7 @@
                 <tr>
                     <th class="text-center px-4 py-2  text-sm font-medium text-gray-700">#</th>
                     <th class="text-center px-4 py-2  text-sm font-medium text-gray-700">نام</th>
+                    <th class="text-center px-4 py-2  text-sm font-medium text-gray-700">کد زبان آموز</th>
                     <th class="text-center px-4 py-2  text-sm font-medium text-gray-700">ایمیل</th>
                     <th class="text-center px-4 py-2  text-sm font-medium text-gray-700">تاریخ ثبت‌نام</th>
                     <th class="text-center px-4 py-2  text-sm font-medium text-gray-700">عملیات</th>
@@ -21,7 +28,13 @@
                 @foreach($users as $user)
                     <tr class="h-12">
                         <td class="text-center px-4 py-2">{{ $user->id }}</td>
-                        <td class="text-center px-4 py-2">{{ $user->name }}</td>
+                        <td class="px-4 py-2 border flex items-center gap-2">
+                            <img src="{{ $user->profile ? asset($user->profile) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=0D8ABC&color=fff&size=40' }}"
+                                 alt="{{ $user->name }}"
+                                 class="w-10 h-10 rounded-full border">
+                            <span>{{ $user->name }}</span>
+                        </td>
+                        <td class="text-center px-4 py-2">{{ $user->id }}</td>
                         <td class="text-center px-4 py-2">{{ $user->email }}</td>
                         <td class="text-center px-4 py-2">{{ $user->created_at?->format('Y/m/d') }}</td>
                         <td class="text-center px-4 py-2">
@@ -31,6 +44,11 @@
                                    class="inline-flex items-center gap-1 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200
                   px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
                                     👁 مشاهده
+                                </a>
+                                <a href="{{ route('admin.students.edit', $user->student) }}"
+                                   class="inline-flex items-center gap-1 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200
+                  px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200">
+                                    👁 ویرایش
                                 </a>
 
                                 <!-- دکمه حذف -->

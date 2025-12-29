@@ -87,13 +87,18 @@
             <form action="{{ route('admin.sliders.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">تصویر اسلایدر <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">تصویر دسکتاپ اسلایدر <span class="text-red-500">*</span></label>
                     <input type="file" name="image" accept="image/*" required
                            class="block w-full text-sm border rounded-md p-2 focus:ring focus:ring-blue-200">
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">تصویر موبایل اسلایدر <span class="text-red-500">*</span></label>
                     <input type="file" name="mobile_image" accept="mobile_image/*" required
+                           class="block w-full text-sm border rounded-md p-2 focus:ring focus:ring-blue-200">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">تصویر تبلت اسلایدر <span class="text-red-500">*</span></label>
+                    <input type="file" name="tablet_image" accept="tablet_image/*" required
                            class="block w-full text-sm border rounded-md p-2 focus:ring focus:ring-blue-200">
                 </div>
 

@@ -6,12 +6,21 @@
         {{-- هدر --}}
         <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700 bg-slate-900">
             <h1 class="text-lg font-bold text-white">
-                📨 گفت‌وگو  <span class="text-indigo-400">{{ $conversation->conversationUsers?->first()->user?->name }}</span>
+                📨 گفت‌وگو  <span class="text-indigo-400">{{ $conversation->conversationUsers?->first()?->user?->name }}</span>
             </h1>
             <a href="{{ route('admin.conversations.index') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium rounded-lg shadow-sm transition transform hover:scale-105">
                 بازگشت
             </a>
+            <form action="{{ route('admin.conversations.delete', $conversation->id) }}" method="POST"
+                  onsubmit="return confirm('آیا مطمئن هستید؟')">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                        class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition">
+                    حذف
+                </button>
+            </form>
         </div>
 
         {{-- پیام‌ها --}}

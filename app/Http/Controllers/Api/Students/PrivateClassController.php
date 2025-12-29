@@ -52,14 +52,15 @@ class PrivateClassController extends Controller
         $class = PrivateClassReservation::find($id);
 
         $futureSessions = PrivateProfessorTimeSlot::where('private_class_reservation_id', $id)
-            ->whereDate('date', '>', now())->where('status' , 'upcoming')->orWhere('status' , 'today')
+            ->whereDate('date', '>=', now()->startOfDay()) // از ابتدای امروز به بعد
+            ->whereIn('status', ['upcoming', 'today'])
             ->get();
         $session = $futureSessions->first();
         $session_count = PrivateProfessorTimeSlot::where('private_class_reservation_id', $id)->count();
         $certificate = Certificate::where('for' , 'private')->where('for_id', $id)->exists();
         $certificate_file = Certificate::where('for' , 'private')->where('for_id', $id)->first();
         $a = [
-            'link' => $class->class_link ?? null,
+            'link' => $class->link ?? null,
             'professor_id' => $class->professor->user->id ?? null,
             'profile' => $class->professor->user->profile ?? null,
             'subgoal' => $class->subgoal->goal->title . ' (' . $class->subgoal->title . ')',
@@ -128,13 +129,22 @@ class PrivateClassController extends Controller
             ->sortBy('session_number')
             ->values()
             ->map(function ($item) use ($link, $professor_id) {
+                // تشخیص اینکه آیا این جلسه امروز است یا نه
+                $isToday = $item->date->isToday();
+
+                // وضعیت نهایی برای نمایش
+                $displayStatus = $isToday ? 'Today' : $item->status;
+
+                // اگر upcoming=true بودیم، فقط Today و Upcoming رو نگه دار (بعد از اصلاح وضعیت)
+                // ولی چون قبلاً فیلتر کردی، اینجا فقط نمایش رو درست می‌کنیم
+
                 return [
                     'id' => $item->id,
                     'session_number' => $item->session_number,
                     'date' => $item->date->format('D ,j M Y'),
                     'time' => $item->time->format('H:i'),
-                    'origin_date' => $item->date->copy()->setTimeFrom($item->time), // تاریخ و ساعت با هم
-                    'status' => $item->status,
+                    'origin_date' => $item->date->copy()->setTimeFrom($item->time),
+                    'status' => $displayStatus, // ← اینجا اصلاح شده
                     'class_link' => $link,
                     'professor_id' => $professor_id,
                     'cancel_by' => $item->cancel_by,
@@ -144,6 +154,13 @@ class PrivateClassController extends Controller
                     'refund' => $item->refund,
                 ];
             })
+            // اگر upcoming=true بود، فقط جلساتی که بعد از اصلاح وضعیت، Today یا Upcoming هستند رو برگردون
+            ->when($upcoming, function ($collection) {
+                return $collection->filter(function ($item) {
+                    return in_array($item['status'], ['Today', 'Upcoming']);
+                });
+            })
+            ->values()
             ->toArray();
     }
 

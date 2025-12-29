@@ -18,8 +18,8 @@
                 <p class="text-gray-600">{{ $professor->bio ?? 'بدون توضیح' }}</p>
 
                 <div class="grid grid-cols-2 gap-4 mt-4">
-                    <p><span class="font-semibold">ایمیل:</span> {{ $professor->email }}</p>
-                    <p><span class="font-semibold">موبایل:</span> {{ $professor->mobile }}</p>
+                    <p><span class="font-semibold">ایمیل:</span> {{ $professor?->user?->email }}</p>
+                    <p><span class="font-semibold">موبایل:</span> {{ $professor->user?->mobile }}</p>
                     <p><span class="font-semibold">جنسیت:</span>
                         {{ $professor->gender === 'male' ? 'مرد' : 'زن' }}
                     </p>

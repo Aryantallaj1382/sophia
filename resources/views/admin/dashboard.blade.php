@@ -73,7 +73,7 @@
                     <tbody class="divide-y divide-gray-200">
                     @foreach($private as $private_class)
                         <tr class="hover:bg-blue-50 transition">
-                            <td class="text-center px-4 py-2">{{$private_class->user->name}}</td>
+                            <td class="text-center px-4 py-2">{{$private_class?->user?->name}}</td>
                             <td class="text-center px-4 py-2">{{$private_class->professor->name}}</td>
                             <td class="text-center px-4 py-2">{{$private_class->class_type}}</td>
                             <td class="text-center px-4 py-2 text-green-600 font-semibold">{{$private_class->sessions_count}}</td>

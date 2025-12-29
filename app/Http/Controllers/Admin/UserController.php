@@ -12,7 +12,7 @@ class UserController extends Controller
     public function index()
     {
         // لیست کاربران با صفحه‌بندی
-        $users = User::paginate(10);
+        $users = User::whereHas('student')->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 

@@ -12,7 +12,7 @@ class PlanController extends Controller
 {
     public function index(Request $request)
     {
-        $planType = $request->query('plan_type');
+        $planType = $request->query('type');
 
         $plans = Plan::query()
             ->when($planType, function ($query, $planType) {
@@ -26,7 +26,7 @@ class PlanController extends Controller
             return [
                 'id' => $plan->id,
                 'color' => $plan->color,
-                'original_price' => $plan->original_price,
+                'original_price' => (int)$plan->original_price,
                 'discount_amount' => $plan->discount_amount,
                 'days' =>$daysLeft .' Days',
                 'name' => $plan->name,
@@ -46,9 +46,10 @@ class PlanController extends Controller
     {
 
         $plan = Plan::find($id);
-        return api_response($plan);
+        return api_response($plan->toArray());
 
     }
+
     public function buy($id)
     {
         $user = auth()->user();

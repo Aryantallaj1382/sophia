@@ -15,9 +15,9 @@ class ProfessorController extends Controller
     public function showPrivate(Request $request)
     {
         $user = auth()->user()->id;
-        $professor = Professor::find($user);
+        $professor = Professor::where('user_id', $user)->first();
 
-        $professorSubgoals = $professor->learningGoals;
+        $professorSubgoals = $professor?->learningGoals ??[];
         $point = [];
         foreach ($professorSubgoals as $learningGoal) {
             $subgoal = $learningGoal->subgoal;
@@ -77,7 +77,8 @@ class ProfessorController extends Controller
             'language_levels' => $languageLevels,
             'sample_video' => $professor->sample_video,
             'view_count' => (int)$professor->view_count,
-            'experience' => $professor->created_at,
+            'experience' => $professor->years_of_experience .' years',
+            'bio' => $professor->created_at,
             'point' => $point,
             'group' => $group,
             'story' => $story,

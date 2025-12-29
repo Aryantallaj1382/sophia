@@ -220,5 +220,12 @@ class AdminGroupClassController extends Controller
 
         return view('admin.group_classes.reservations', compact('reservations'));
     }
+    public function delete(GroupClass $groupClass)
+    {
+        $groupClass->delete();
+        return redirect()->route('admin.group_class.index');
+
+
+    }
 
 }

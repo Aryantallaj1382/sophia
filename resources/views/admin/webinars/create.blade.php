@@ -66,14 +66,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="bg-gray-50 p-6 rounded-xl">
-                    <label class="block font-semibold mb-2">سطح زبان <span class="text-red-500">*</span></label>
-                    <select name="language_level_id" class="w-full rounded-xl border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400" required>
-                        @foreach($languageLevels as $age)
-                            <option value="{{ $age->id }}">{{ $age->title }}</option>
-                        @endforeach
-                    </select>
-                </div>
+
                 <div class="bg-gray-50 p-6 rounded-xl">
                     <label class="block font-semibold mb-2">پلتفرم ها <span class="text-red-500">*</span></label>
                     <select name="platform_id" class="w-full rounded-xl border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400" required>

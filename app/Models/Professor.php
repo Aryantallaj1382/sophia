@@ -30,7 +30,22 @@ class Professor extends Model
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
-
+    public function getSampleVideoCoverAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+    }
+    public function getTeachingVideoCoverAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+    }
+    public function getTeachingVideoAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+    }
+    public function getSampleVideoAttribute($value)
+    {
+        return $value ? url('public/'.$value) : null;
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

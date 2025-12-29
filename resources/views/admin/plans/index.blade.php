@@ -56,8 +56,9 @@
                             </p>
                             @if($plan->discount_amount)
                                 <p class="text-sm text-green-600">
-                                    تخفیف: {{ number_format($plan->discount_amount) }}
+                                    پول ذخیره شده: {{ number_format($plan->discount_amount) }}
                                 </p>
+
                                 <p class="text-sm text-gray-500 line-through">
                                     قیمت اصلی: {{ number_format($plan->original_price) }}
                                 </p>

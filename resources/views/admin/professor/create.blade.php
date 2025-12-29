@@ -56,32 +56,6 @@
 
             <input type="date" name="birth_date" class="w-full border rounded p-2 text-right">
 
-            <!-- آپلود فایل‌ها -->
-            <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 text-gray-600 cursor-pointer">
-                آپلود ویدیو نمونه تدریس
-                <input type="file" name="sample_video" accept="video/*" class="hidden">
-            </label>
-
-            <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 text-gray-600 cursor-pointer">
-                آپلود کاور نمونه تدریس
-                <input type="file" name="sample_video_cover" accept="video/*" class="hidden">
-            </label>
-
-            <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 text-gray-600 cursor-pointer">
-                آپلود ویدیو نمونه تدریس
-                <input type="file" name="teaching_video" accept="video/*" class="hidden">
-            </label>
-
-            <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 text-gray-600 cursor-pointer">
-                آپلود کاور معرفی
-                <input type="file" name="teaching_video_cover" accept="video/*" class="hidden">
-            </label>
-
-            <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 text-gray-600 cursor-pointer">
-                آپلود عکس پروفایل
-                <input type="file" name="profile" accept="image/*" class="hidden">
-            </label>
-
             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded col-span-1 md:col-span-2">
                 ثبت استاد
             </button>

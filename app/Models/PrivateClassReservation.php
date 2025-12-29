@@ -15,6 +15,7 @@ class PrivateClassReservation extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     public function professor()
     {
         return $this->belongsTo(Professor::class);
@@ -53,5 +54,22 @@ class PrivateClassReservation extends Model
     public function skill()
     {
         return $this->belongsTo(Skill::class, 'skill_id');
+    }
+    public function getLinkAttribute()
+    {
+        if ($this->platform?->title == 'Class In')
+        {
+            return $this->professor->classin_link;
+        }
+        elseif ($this->platform?->title == 'Zoom')
+        {
+            return $this->professor->zoom_link;
+        }
+        elseif ($this->platform?->title == 'Voov')
+        {
+            return $this->professor->voov_link;
+        }
+        else return null;
+
     }
 }

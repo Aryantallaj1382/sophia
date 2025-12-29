@@ -66,8 +66,15 @@ class AdminWebinarController extends Collection
         ]);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('webinars', 'public');
+            $file = $request->file('image');
+
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            $file->move(public_path('webinars'), $filename);
+
+            $data['image'] = 'webinars/' . $filename;
         }
+
 
         Webinar::create($data);
 
@@ -111,12 +118,22 @@ class AdminWebinarController extends Collection
         ]);
 
         if ($request->hasFile('image')) {
-            // حذف تصویر قبلی در صورت وجود
-            if ($webinar->image && file_exists(public_path('storage/' . str_replace('public/', '', $webinar->image)))) {
-                unlink(public_path('storage/' . str_replace('public/', '', $webinar->image)));
+
+            // حذف تصویر قبلی (اگر وجود دارد)
+            if ($webinar->image && file_exists(public_path($webinar->image))) {
+                unlink(public_path($webinar->image));
             }
-            $data['image'] = $request->file('image')->store('webinars', 'public');
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+
+            // ذخیره مستقیم در public/webinars
+            $file->move(public_path('webinars'), $filename);
+
+            // ذخیره مسیر نسبی در دیتابیس
+            $data['image'] = 'webinars/' . $filename;
         }
+
 
         $webinar->update($data);
 

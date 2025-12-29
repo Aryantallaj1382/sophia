@@ -60,11 +60,15 @@
                                 <label class="block text-sm font-medium text-gray-700">ایمیل</label>
                                 <input type="email" name="email" value="{{ old('email', $professor->user->email) }}" class="mt-1 block w-full border rounded p-2" required>
                             </div>
-
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">موبایل</label>
-                                <input type="text" name="mobile" value="{{ old('mobile', $professor->user->mobile) }}" class="mt-1 block w-full border rounded p-2">
+                                <input type="text" name="mobile" value="{{ old('mobile', $professor->user->mobile) }}" class="mt-1 block w-full border rounded p-2" required>
                             </div>
+
+                            {{--                            <div>--}}
+                            {{--                                <label class="block text-sm font-medium text-gray-700">موبایل</label>--}}
+                            {{--                                <input type="text" name="mobile" value="{{ old('mobile', $professor->user->mobile) }}" class="mt-1 block w-full border rounded p-2">--}}
+                            {{--                            </div>--}}
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">سابقه تدریس (سال)</label>
@@ -104,6 +108,7 @@
                             </label>
                         </div>
 
+
                         <!-- جنسیت و تاریخ تولد -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                             <div>
@@ -129,61 +134,105 @@
                         <!-- ویدیوها و تصاویر -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                            <!-- ویدیو نمونه تدریس -->
-                            <div class="col-span-1">
-                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
-                                    آپلود ویدیو نمونه تدریس
+                            <!-- ویدیو معرفی -->
+                            <div class="col-span-1 relative">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:border-blue-500">
+                                    آپلود ویدیو معرفی
                                     <input type="file" name="sample_video" accept="video/*" class="hidden">
                                 </label>
+
                                 @if($professor->sample_video)
-                                    <video controls class="w-full mt-2 rounded-lg shadow-md">
-                                        <source src="{{ asset(old('sample_video', $professor->sample_video)) }}">
-                                    </video>
+                                    <div class="mt-3 relative">
+                                        <video controls class="w-full rounded-lg shadow-md">
+                                            <source src="{{ asset(old('sample_video', $professor->sample_video)) }}">
+                                        </video>
+                                        <button type="button" onclick="confirmDelete('sample_video')"
+                                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 shadow-lg">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="delete_sample_video" id="delete_sample_video" value="">
                                 @endif
                             </div>
 
-                            <!-- کاور نمونه تدریس -->
-                            <div class="col-span-1">
-                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
-                                    آپلود کاور نمونه تدریس
+                            <!-- کاور ویدیو معرفی -->
+                            <div class="col-span-1 relative">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:border-blue-500">
+                                    آپلود کاور معرفی
                                     <input type="file" name="sample_video_cover" accept="image/*" class="hidden">
                                 </label>
+
                                 @if($professor->sample_video_cover)
-                                    <img src="{{ asset(old('sample_video_cover', $professor->sample_video_cover)) }}" class="mt-2 w-32 h-32 rounded object-cover">
+                                    <div class="mt-3 relative">
+                                        <img src="{{ asset(old('sample_video_cover', $professor->sample_video_cover)) }}" class="w-32 h-32 rounded object-cover shadow-md">
+                                        <button type="button" onclick="confirmDelete('sample_video_cover')"
+                                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 shadow-lg">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="delete_sample_video_cover" id="delete_sample_video_cover" value="">
                                 @endif
                             </div>
 
-                            <!-- ویدیو معرفی -->
-                            <div class="col-span-1">
-                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
-                                    آپلود ویدیو معرفی
+                            <!-- ویدیو نمونه تدریس -->
+                            <div class="col-span-1 relative">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:border-blue-500">
+                                    آپلود نمونه تدریس
                                     <input type="file" name="teaching_video" accept="video/*" class="hidden">
                                 </label>
+
                                 @if($professor->teaching_video)
-                                    <video controls class="w-full mt-2 rounded-lg shadow-md">
-                                        <source src="{{ asset(old('teaching_video', $professor->teaching_video)) }}">
-                                    </video>
+                                    <div class="mt-3 relative">
+                                        <video controls class="w-full rounded-lg shadow-md">
+                                            <source src="{{ asset(old('teaching_video', $professor->teaching_video)) }}">
+                                        </video>
+                                        <button type="button" onclick="confirmDelete('teaching_video')"
+                                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 shadow-lg">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="delete_teaching_video" id="delete_teaching_video" value="">
                                 @endif
                             </div>
 
-                            <!-- کاور معرفی -->
-                            <div class="col-span-1">
-                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
-                                    آپلود کاور معرفی
+                            <!-- کاور ویدیو نمونه تدریس -->
+                            <div class="col-span-1 relative">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:border-blue-500">
+                                    آپلود کاور نمونه تدریس
                                     <input type="file" name="teaching_video_cover" accept="image/*" class="hidden">
                                 </label>
+
                                 @if($professor->teaching_video_cover)
-                                    <img src="{{ asset(old('teaching_video_cover', $professor->teaching_video_cover)) }}" class="mt-2 w-32 h-32 rounded object-cover">
+                                    <div class="mt-3 relative">
+                                        <img src="{{ asset(old('teaching_video_cover', $professor->teaching_video_cover)) }}" class="w-32 h-32 rounded object-cover shadow-md">
+                                        <button type="button" onclick="confirmDelete('teaching_video_cover')"
+                                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 shadow-lg">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="delete_teaching_video_cover" id="delete_teaching_video_cover" value="">
                                 @endif
                             </div>
 
                             <!-- عکس پروفایل -->
-                            <div class="col-span-1">
-                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer">
+                            <div class="col-span-1 relative">
+                                <label class="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 cursor-pointer hover:border-blue-500">
                                     آپلود عکس پروفایل
                                     <input type="file" name="profile" accept="image/*" id="profileInput" class="hidden">
                                 </label>
-                                <img id="profilePreview" src="{{ asset(old('profile', $professor->profile)) }}" class="mt-2 w-32 h-32 rounded-full object-cover">
+
+                                @if($professor->user->profile)
+                                    <div class="mt-3 relative">
+                                        <img id="profilePreview" src="{{ asset(old('profile', $professor->user->profile)) }}" class="w-32 h-32 rounded-full object-cover shadow-md">
+                                        <button type="button" onclick="confirmDelete('profile')"
+                                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-700 shadow-lg">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="delete_profile" id="delete_profile" value="">
+                                @else
+                                    <img id="profilePreview" src="{{ asset(old('profile', 'i1.png')) }}" class="mt-2 w-32 h-32 rounded-full object-cover">
+                                @endif
                             </div>
 
                         </div>
@@ -201,6 +250,61 @@
                                 }
                             });
                         </script>
+
+                        <!-- اسکریپت حذف فایل‌ها -->
+                        <script>
+                            function confirmDelete(field) {
+                                if (confirm('آیا از حذف این فایل مطمئن هستید؟')) {
+                                    document.getElementById('delete_' + field).value = '1';
+
+                                    // کم‌رنگ کردن پیش‌نمایش و پنهان کردن دکمه پس از تایید حذف (سمت کلاینت)
+                                    const previewContainer = event.target.closest('.relative');
+                                    const media = previewContainer.querySelector('video, img');
+                                    if (media) media.style.opacity = '0.5';
+                                    event.target.style.display = 'none';
+                                }
+                            }
+                        </script>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="placement" class="block text-sm font-medium text-gray-700 mb-1">تعیین سطح</label>
+                                <select id="placement" name="placement"
+                                        class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+
+                                    @php
+                                        $placementValue = old('placement', $professor->placement);
+                                    @endphp
+
+                                    <option value="" {{ $placementValue === null || $placementValue === '' ? 'selected' : '' }}>برگزار نمیکند</option>
+                                    <option value="0"  {{ $placementValue == '0' ? 'selected' : '' }}>بدون تخفیف</option>
+                                    <option value="50" {{ $placementValue == '50' ? 'selected' : '' }}>50 درصد تخفیف</option>
+                                    <option value="100" {{ $placementValue == '100' ? 'selected' : '' }}>رایگان</option>
+
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="trial" class="block text-sm font-medium text-gray-700 mb-1">کلاس آزمایشی</label>
+                                <select id="trial" name="trial"
+                                        class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+
+                                    @php
+                                        $trialValue = old('trial', $professor->trial);
+                                    @endphp
+
+                                    <option value="" {{ $trialValue === null || $trialValue === '' ? 'selected' : '' }}>برگزار نمیکند</option>
+                                    <option value="0"  {{ $trialValue == '0' ? 'selected' : '' }}>بدون تخفیف</option>
+                                    <option value="50" {{ $trialValue == '50' ? 'selected' : '' }}>50 درصد تخفیف</option>
+                                    <option value="100" {{ $trialValue == '100' ? 'selected' : '' }}>رایگان</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+
+
 
                         <!-- بخش انتخاب‌ها به صورت کارت/چک‌باکس (بدون دراپ‌داون) -->
                         <div class="space-y-4">
@@ -232,6 +336,40 @@
                                         <span class="text-sm">{{ $item->title }}</span>
                                     </label>
                                 @endforeach
+                            </div>
+                            <h4 class="text-sm font-semibold mt-4 mb-2">اطلاعات</h4>
+                            <div class="grid grid-cols-4 gap-3">
+                                <div>
+                                    <label class="flex items-center gap-2">
+                                        <span class="text-sm">teams</span>
+                                    </label>
+                                    <input type="text" name="teams" value="{{ old('teams', $professor->teams) }}" placeholder="teams" class="p-2 border rounded text-sm">
+
+                                </div>
+                             <div>
+                                 <label class="flex items-center gap-2">
+                                     <span class="text-sm">zoom_link</span>
+                                 </label>
+                                 <input type="text" name="zoom_link" value="{{ old('zoom_link', $professor->zoom_link) }}" placeholder="zoom_link" class="p-2 border rounded text-sm">
+
+                             </div>
+                                <div>
+                                    <label class="flex items-center gap-2">
+                                        <span class="text-sm">classin_link</span>
+                                    </label>
+                                    <input type="text" name="classin_link" value="{{ old('classin_link', $professor->classin_link) }}" placeholder="classin_link" class="p-2 border rounded text-sm">
+
+                                </div>
+                                <div>
+
+                                    <label class="flex items-center gap-2">
+                                        <span class="text-sm">voov_link</span>
+                                    </label>
+                                    <input type="text" name="voov_link" value="{{ old('voov_link', $professor->voov_link) }}" placeholder="voov_link" class="p-2 border rounded text-sm">
+
+                                </div>
+
+
                             </div>
 
                             <h3 class="text-lg font-semibold">لهجه‌ها</h3>
@@ -270,7 +408,7 @@
                                                 <label class="flex items-center gap-2">
                                                     <input type="checkbox" name="learning_goals[]" value="{{ $sub->id }}"
                                                         {{ in_array($sub->id, old('learning_goals', $professor->learningGoals->pluck('subgoal_id')->toArray())) ? 'checked' : '' }}>
-                                                    text-sm">{{ $sub->title }}</span>
+                                                    {{ $sub->title }}</span>
                                                 </label>
                                             @endforeach
                                         </div>
@@ -279,10 +417,10 @@
                             </div>
 
 
-                        <div class="flex justify-between items-center mt-4">
-                            <a href="{{ route('admin.professors.index') }}" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">انصراف</a>
-                            <button type="submit" class="px-6 py-2 rounded bg-green-600 text-white hover:bg-green-700">ذخیره تغییرات</button>
-                        </div>
+                            <div class="flex justify-between items-center mt-4">
+                                <a href="{{ route('admin.professors.index') }}" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">انصراف</a>
+                                <button type="submit" class="px-6 py-2 rounded bg-green-600 text-white hover:bg-green-700">ذخیره تغییرات</button>
+                            </div>
                         </div>
                     </form>
 

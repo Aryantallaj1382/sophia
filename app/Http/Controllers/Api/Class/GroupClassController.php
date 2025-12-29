@@ -43,7 +43,7 @@ class GroupClassController extends Controller
             'id' => $class->id,
             'name' => $class->name,
             'schedules' => $schedules,
-            'topic'=>null,
+            'topic'=> $class->subject->title,
             'image' => $class->image,
             'max_capacity' => $class->max_capacity,
             'start_date' => \Carbon\Carbon::parse($class->start_date)->format('j F'),
@@ -81,7 +81,7 @@ class GroupClassController extends Controller
         $reserve = GroupClass::find($id);
         $user  = auth()->user();
         $user_plan = UserPlan::where('user_id', $user->id)->where('is_active', 1)
-            ->where('class_count','>',0)->where('expires_at', '>=', Carbon::now())->first();
+            ->where('class_count','>',0)->where('expires_at', '>=', Carbon::now())->whereRelation('plan' , 'plan_type' , 'group')->first();
         $days_left = null;
         $hours_left = null;
         if ($user_plan) {

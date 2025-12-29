@@ -43,6 +43,9 @@ class AdminBookController
             'volume'        => 'nullable|integer|min:1',
             'topics'        => 'nullable|string',
             'book_type'     => 'nullable',
+            'audio_file'     => 'nullable',
+            'video_file'     => 'nullable',
+            'publication'     => 'nullable',
 
             'description'   => 'nullable|string',
             'image'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -112,6 +115,7 @@ class AdminBookController
                 $data['topics'] = $topics;
             }
         }
+        unset($data['sample_pages']);
 
         $book = Book::create($data);
 
@@ -137,40 +141,70 @@ class AdminBookController
     public function update(Request $request, Book $book)
     {
         $data = $request->validate([
-            'name'       => 'required|string|max:255',
-            'title_file' => 'nullable|string|max:255',
-            'author'     => 'nullable|string|max:255',
-            'edition'    => 'nullable|integer|min:1',
-            'volume'     => 'nullable|integer|min:1',
-            'topics'     => 'nullable|array',
-            'book_type'     => 'nullable',
-            'description'=> 'nullable|string',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'video'      => 'nullable|file|mimes:mp4,mov,avi|max:10240',
-            'file'       => 'nullable|file|mimes:pdf,doc,docx,epub|max:10240',
+            'name'          => 'required|string|max:255',
+            'title_file'    => 'nullable|string|max:255',
+            'author'        => 'nullable|string|max:255',
+            'edition'       => 'nullable|integer|min:1',
+            'volume'        => 'nullable|integer|min:1',
+            'topics'        => 'nullable|string',
+            'book_type'     => 'nullable|string',
+            'description'   => 'nullable|string',
+            'image'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'video'         => 'nullable|file|mimes:mp4,mov,avi|max:10240',
+            'file'          => 'nullable|file|mimes:pdf,doc,docx,epub|max:10240',
+            'sample_pages'   => 'nullable|array',
+            'sample_pages.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'audio_file'     => 'nullable',
+            'video_file'     => 'nullable',
+            'publication'     => 'nullable',
         ]);
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('books/images', 'public');
-        }
-
-        if ($request->hasFile('video')) {
-            $data['video'] = $request->file('video')->store('books/videos', 'public');
-        }
-
-        if ($request->hasFile('file')) {
-            $data['file'] = $request->file('file')->store('books/files', 'public');
-        }
-
-        if (!empty($data['topics']) && is_string($data['topics'])) {
+        // topics
+        if (!empty($data['topics'])) {
             $topics = json_decode($data['topics'], true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $data['topics'] = $topics;
-            }
+            $data['topics'] = json_last_error() === JSON_ERROR_NONE
+                ? $topics
+                : array_map('trim', explode(',', $data['topics']));
         }
+
+        // تصویر
+        if ($request->hasFile('image')) {
+            $imageName = uniqid().'.'.$request->image->extension();
+            $request->image->move(public_path('books/images'), $imageName);
+            $data['image'] = 'books/images/'.$imageName;
+        }
+
+        // ویدیو
+        if ($request->hasFile('video')) {
+            $videoName = uniqid().'.'.$request->video->extension();
+            $request->video->move(public_path('books/videos'), $videoName);
+            $data['video'] = 'books/videos/'.$videoName;
+        }
+
+        // فایل کتاب
+        if ($request->hasFile('file')) {
+            $fileName = uniqid().'.'.$request->file->extension();
+            $request->file->move(public_path('books/files'), $fileName);
+            $data['file'] = 'books/files/'.$fileName;
+        }
+
+        unset($data['sample_pages']);
 
         $book->update($data);
 
-        return redirect()->route('admin.books.show', $book->id)->with('success', 'کتاب با موفقیت بروزرسانی شد.');
+        // صفحات نمونه جدید
+        if ($request->hasFile('sample_pages')) {
+            foreach ($request->file('sample_pages') as $sample) {
+                $sampleName = uniqid().'.'.$sample->extension();
+                $sample->move(public_path('books/sample_pages'), $sampleName);
+                $book->samplePages()->create([
+                    'image' => 'books/sample_pages/'.$sampleName
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('admin.books.index')
+            ->with('success', '✏️ کتاب با موفقیت ویرایش شد.');
     }
 }

@@ -110,9 +110,9 @@ class ProfessorCalenderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dates' => 'required|array',
-            'dates.*.date' => 'required|date',
-            'dates.*.time' => 'required|date_format:H:i',
+            'dates' => 'nullable|array',
+            'dates.*.date' => 'nullable|date',
+            'dates.*.time' => 'nullable|date_format:H:i',
             'week' => 'nullable|integer|min:1',
         ]);
 

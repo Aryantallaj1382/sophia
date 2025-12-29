@@ -86,6 +86,7 @@ Route::get('/getDaySlotsForAll', [App\Http\Controllers\Api\Calender\CalenderCont
 
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
+    Route::post('/p-login', 'p_login');
     Route::post('/loginOtp', 'loginOtp');
     Route::post('/sendOtp', [\App\Http\Controllers\Api\Auth\SmsController::class, 'sendOtp']);
     Route::post('/register', 'register');

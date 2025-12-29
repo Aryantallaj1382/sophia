@@ -82,10 +82,17 @@ class ExamController extends Controller
         $user = auth()->user() ?? null;
         $user_plan = null;
         if (auth()->user()) {
-            $user_plan = UserPlan::where('user_id', $user->id)->where('is_active', 1)
-                ->whereRelation('plan', 'plan_type', 'mock_test')->orwhereRelation('plan', 'plan_type', 'exam')
-                ->where('class_count', '>', 0)->where('expires_at', '>=', Carbon::now())->first();
+            $user_plan = UserPlan::where('user_id', auth()->id())
+                ->where('is_active', 1)
+                ->where(function ($query) {
+                    $query->whereRelation('plan', 'plan_type', 'mock_test')
+                        ->orWhereRelation('plan', 'plan_type', 'exam');
+                })
+                ->where('class_count', '>', 0)
+                ->where('expires_at', '>=', Carbon::now())
+                ->first();
         }
+
 
         $days_left = null;
         $hours_left = null;
@@ -313,7 +320,7 @@ class ExamController extends Controller
         $exam = Exam::find($id);
         $exam_student = ExamStudent::where('exam_id', $id)->where('student_id', $user->id)->latest()->first();
         if (!$exam_student || $exam_student->status == 'completed') {
-            $result = PlanHelper::reserveClass($user->id, 'exam', $request, $id);
+            $result = PlanHelper::reserveClass($user->id, 'mock_test', $request, $id);
             if (!$result['success']) {
                 return response()->json(['message' => $result['message']], 422);
             }
@@ -371,6 +378,7 @@ class ExamController extends Controller
         if (is_null($exam_student->expired_at)) {
             $updateData['expired_at'] = Carbon::now()->addHours($hours)->addMinutes($minutes);
         }
+
 
 
         $exam_student->update($updateData);
@@ -444,7 +452,7 @@ class ExamController extends Controller
 
             'part_id' => $part->id,
             'part_title' => $part->title,
-            'duration' => $duration,
+            'duration' => '18:18:18' ,
 
             'passenger' => $part->passenger,
             'passenger_title' => $part->passenger_title,

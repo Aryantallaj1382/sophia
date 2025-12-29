@@ -16,8 +16,9 @@ class ProfessorPrivateClassController extends Controller
     public function index()
     {
         $user =  auth()->user()->professor;
-        $private = PrivateClassReservation::where('professor_id', $user->id)->paginate(12);
+        $private = PrivateClassReservation::with('user')->where('professor_id', $user->id)->paginate(12);
         $private->getCollection()->transform(function ($item, $key) {
+
             $pastSessionsCount = $item->timeSlots
                 ->where('date', '<', now()->toDateString())
                 ->count();
@@ -25,9 +26,9 @@ class ProfessorPrivateClassController extends Controller
 
             return [
                 'id' => $item->id,
-                'professor_id' => $item->user->id,
+                'professor_id' => $item->user(),
                 'professor_name' => $item->user?->student?->nickname,
-                'professor_profile' => $item->user->profile,
+                'professor_profile' => $item->user?->profile,
                 'subgoal' => $item->subgoal->goal->title . ' (' . $item->subgoal->title . ')',
                 'date' => $item->timeSlots()
                     ->where('date', '>=', now()->toDateString())

@@ -24,4 +24,10 @@ class ConversationController extends Controller
 
         return view('admin.conversations.show', compact(['conversation','user']));
     }
+    public function destroy($id)
+    {
+        $conversation = Conversation::findOrFail($id);
+        $conversation->delete();
+        return redirect()->route('admin.conversations.index');
+    }
 }
