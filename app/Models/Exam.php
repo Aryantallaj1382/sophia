@@ -15,7 +15,8 @@ class Exam extends Model
         'description',
         'view',
         'type', 'age_group_id', 'language_level_id', 'skill_id',
-        'books_id'
+        'books_id',
+
 
     ];
     protected $casts = [
@@ -46,6 +47,10 @@ class Exam extends Model
     public function languageLevel()
     {
         return $this->belongsTo(LanguageLevel::class, 'language_level_id');
+    }
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function skill()

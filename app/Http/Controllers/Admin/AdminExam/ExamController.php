@@ -172,7 +172,7 @@ class ExamController extends Controller
             'expiration' => 'nullable|string|max:255',
             'number_of_attempts' => 'nullable|integer|min:1',
             'number_of_sections' => 'nullable|integer|min:1',
-            'duration' => 'nullable|integer|min:1',
+            'duration' => 'nullable',
             'view' => 'nullable|string|max:255',
             'type' => 'required|in:mock,final,placement',
         ]);
@@ -215,13 +215,6 @@ class ExamController extends Controller
 
         }
 
-        // تبدیل مدت زمان به فرمت HH:MM:SS
-        if (!empty($data['duration'])) {
-            $minutes = (int) $data['duration'];
-            $hours = floor($minutes / 60);
-            $mins  = $minutes % 60;
-            $data['duration'] = sprintf('%02d:%02d:00', $hours, $mins);
-        }
 
         $exam->update($data);
 

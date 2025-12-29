@@ -122,7 +122,7 @@ class GroupClassController extends Controller
             ->exists();
 
         if ($exists) {
-            return response()->json(['message' => 'شما قبلاً این کلاس را رزرو کرده‌اید.'], 422);
+            return response()->json(['message' => 'You have already booked this class.'], 422);
         }
 
         $result = PlanHelper::reserveClass($userId, 'group', $request , $id);
@@ -139,7 +139,7 @@ class GroupClassController extends Controller
         $user = auth()->user();
 
         if (!$user) {
-            return api_response([], 'برای لایک کردن لاگین کنید', 401);
+            return api_response([], 401);
         }
 
         $like = $user->likes()
@@ -165,15 +165,6 @@ class GroupClassController extends Controller
             'body' => 'nullable|string|min:1|max:400', // حداقل طول 1 برای جلوگیری از رشته خالی
             'video_url' => 'nullable|file',
             'voice_url' => 'nullable|file',
-        ], [
-            'body.min' => 'توضیحات نباید خالی باشد.',
-            'body.required_without_all' => 'توضیحات یا ویدیو یا ویس باید ارسال شود.',
-            'video_url.required_without_all' => 'توضیحات یا ویدیو یا ویس باید ارسال شود.',
-            'voice_url.required_without_all' => 'توضیحات یا ویدیو یا ویس باید ارسال شود.',
-        ], [
-            'body' => 'توضیحات',
-            'video_url' => 'ویدیو',
-            'voice_url' => 'ویس',
         ]);
 
 
@@ -289,7 +280,7 @@ class GroupClassController extends Controller
         $user = auth()->user();
 
         if (!$user) {
-            return api_response([], 'برای امتیازدهی باید لاگین کنید', 401);
+            return api_response([], 401);
         }
 
         $request->validate([

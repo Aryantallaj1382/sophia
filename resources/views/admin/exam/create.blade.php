@@ -90,9 +90,13 @@
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">تاریخ انقضا</label>
-                        <input dir="auto" type="date" name="expiration" class="form-control"
-                               value="{{ old('expiration') }}">
+                        <label class="form-label fw-bold">زمان (۲۴ ساعته)</label>
+                        <input
+                            type="time"
+                            name="expiration"
+                            class="form-control"
+                            step="1"
+                            value="{{ $exam->expiration }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">تعداد دفعات</label>

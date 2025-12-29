@@ -361,21 +361,23 @@ class ExamController extends Controller
 
 
         $exam_student = ExamStudent::where('exam_id', $examId)->where('student_id', $student->id)->where('status', '!=', 'completed')->where('student_id', $student->id)->latest()->first();
-        if (!$exam_student) {
-            return api_response([], 'please puy the exam', 422);
-        } elseif ($exam_student->status == 'completed') {
-            return api_response([], 'expired exam time', 422);
+//
+//        if (!$exam_student) {
+//            return api_response([], 'please buy the exam', 422);
+//        } elseif ($exam_student->status == 'completed') {
+//            return api_response([], 'expired exam time', 422);
+//
+//        } elseif ($exam_student->expired_at < Carbon::now() && $exam_student->expired_at !== null) {
+//            return api_response([], 'expired exam time', 422);
+//            $exam_student->update([
+//                'status' => 'completed',
+//            ]);
+//        }
 
-        } elseif ($exam_student->expired_at < Carbon::now() && $exam_student->expired_at !== null) {
-            return api_response([], 'expired exam time', 422);
-            $exam_student->update([
-                'status' => 'completed',
-            ]);
-        }
         $hours = (int)$exam->duration->format('H'); // ساعت
         $minutes = (int)$exam->duration->format('i'); // دقیقه
         $updateData = ['status' => 'in_progress', 'started_at' => Carbon::now()];
-        if (is_null($exam_student->expired_at)) {
+        if (is_null($exam_student?->expired_at)) {
             $updateData['expired_at'] = Carbon::now()->addHours($hours)->addMinutes($minutes);
         }
 
@@ -452,7 +454,7 @@ class ExamController extends Controller
 
             'part_id' => $part->id,
             'part_title' => $part->title,
-            'duration' => '18:18:18' ,
+            'duration' => $exam->duration?->format('H:i:s')?? null ,
 
             'passenger' => $part->passenger,
             'passenger_title' => $part->passenger_title,
@@ -487,8 +489,8 @@ class ExamController extends Controller
     public function submitAnswers(Request $request)
     {
         $request->validate([
-            'answers' => 'required|array',
-            'answers.*.question_id' => 'required|exists:exam_questions,id',
+            'answers' => 'nullable|array',
+            'answers.*.question_id' => 'nullable|exists:exam_questions,id',
             'answers.*.text_answer' => 'nullable|string',
             'answers.*.file' => 'nullable', // می‌تونه نیاد یا null باشه
             'answers.*.variant_id' => 'nullable',

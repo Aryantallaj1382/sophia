@@ -93,11 +93,17 @@
                         <input dir="auto" type="number" name="number_of_sections" class="form-control"
                                placeholder="مثلاً: 5" value="{{ $exam->number_of_sections }}">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">مدت زمان (دقیقه)</label>
-                        <input dir="auto" type="number" name="duration" class="form-control"
-                               placeholder="مثلاً: 60" value="{{ $exam->duration_in_minutes ?? '' }}">
-                    </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">زمان (۲۴ ساعته)</label>
+                            <input
+                                type="time"
+                                name="duration"
+                                class="form-control"
+                                step="1"
+                                value="{{ $exam->duration ? \Carbon\Carbon::parse($exam->duration)->format('H:i:s') : '' }}">
+
+                        </div>
                 </div>
 
                 <div class="mb-4">
