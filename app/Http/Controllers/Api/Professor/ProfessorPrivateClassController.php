@@ -78,8 +78,8 @@ class ProfessorPrivateClassController extends Controller
         $book = $private?->reservedBooks?->first();
         $return = [
             'id' => $private->id,
-            'professor_name' => $private->professor->name,
-            'professor_id' => $private->professor->id,
+            'professor_name' => $private->user->name,
+            'professor_id' => $private->user->id,
             'count' => $private->timeSlots->count(),
             'ageGroup' => $private->ageGroup->title,
             'languageLevel' => $private->languageLevel->title,
@@ -164,6 +164,7 @@ class ProfessorPrivateClassController extends Controller
             'cancel_reason' => $request->cancel_reason,
             'cancel_reason_file' => null,
             'status' => 'cancelled',
+            'cancel_by' => 'professor',
         ]);
         return api_response([], 'cancel');
     }

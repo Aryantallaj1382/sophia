@@ -25,11 +25,15 @@ class AdminCertificateController extends Controller
             'status' => 'required|in:pending,approved,rejected',
             'file' => 'nullable|file|mimes:pdf,jpg,png|max:5120', // 5MB max
         ]);
-
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('certificates', 'public');
-            $certificate->file = $path;
+            $file = $request->file('file');
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('certificates'), $fileName);
+
+            $certificate->file = 'certificates/' . $fileName;
         }
+
 
         $certificate->status = $request->status;
         $certificate->save();

@@ -11,4 +11,9 @@ class Certificate extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function getFileAttribute($value)
+    {
+        return $value ? url("public/" . $value) : null;
+
+    }
 }

@@ -381,13 +381,21 @@ PrivateClassController extends Controller
         $startDate = $request->start_date;
         $endDate = date('Y-m-d', strtotime($startDate . ' +6 days'));
 
+        $nowPlusTwoHours = Carbon::now()->addHours(2);
+
         $timeSlots = ProfessorTimeSlot::where('professor_id', $id)
-            // ->whereDate('date', '>=', today())
-            // ->whereBetween('date', [$startDate, $endDate])
+            ->whereBetween('date', [$startDate, $endDate])
+            ->where(function ($query) use ($nowPlusTwoHours) {
+                $query->where('date', '>', today())
+                    ->orWhere(function ($q) use ($nowPlusTwoHours) {
+                        $q->whereDate('date', today())
+                            ->whereTime('time', '>=', $nowPlusTwoHours->format('H:i'));
+                    });
+
+            })
             ->get()
             ->groupBy('date');
 
-        // timezone کاربر از روی IP
 //        $timezone = geoip()->getLocation($request->ip())->timezone ?? 'UTC';
 
         $formattedSlots = $this->formatTimeSlots($timeSlots, $timezone ?? 'Asia/Tehran');
@@ -617,7 +625,7 @@ PrivateClassController extends Controller
         $bookData = $request->validate([
             'selection_type' => 'nullable|string',
             'link' => 'nullable|string',
-            'file' => 'nullable|string',
+            'file' => 'nullable|file',
             'book_id' => 'nullable|integer',
             'username' => 'nullable|string',
             'password' => 'nullable|string',
@@ -626,6 +634,17 @@ PrivateClassController extends Controller
         $timeSlotIds = $request->input('times');
 
         $reservation = PrivateClassReservation::create($validated);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('reserved_books'), $fileName);
+
+            // مسیر قابل استفاده در DB
+            $bookData['file'] = 'reserved_books/' . $fileName;
+        }
+
         if (!empty($bookData)) {
             $bookData['private_class_reservation_id'] = $reservation->id;
             ReservedBook::create($bookData);

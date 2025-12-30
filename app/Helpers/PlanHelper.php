@@ -59,19 +59,19 @@ class PlanHelper
                     'description' => $request->description ?? null,
                     'status' => 'approved',
                 ]);
-            case 'mock_test':
-                $exam = Exam::find($id);
-                $hours = (int) $exam->duration->format('H'); // ساعت
-                $minutes = (int) $exam->duration->format('i'); // دقیقه
-                $reservation = ExamStudent::create([
-                    'exam_id' => $id,
-                    'user_id' => $userId,
-                    'status' => 'not_started',
-                    'student_id'=>$userId,
-//                    'expired_at' => Carbon::now()->addHours($hours)->addMinutes($minutes),
-//                    'started_at' => Carbon::now(),
-
-                ]);
+//            case 'mock_test':
+//                $exam = Exam::find($id);
+//                $hours = (int) $exam?->duration->format('H'); // ساعت
+//                $minutes = (int) $exam?->duration->format('i'); // دقیقه
+//                $reservation = ExamStudent::create([
+//                    'exam_id' => $id,
+//                    'user_id' => $userId,
+//                    'status' => 'not_started',
+//                    'student_id'=>$userId,
+////                    'expired_at' => Carbon::now()->addHours($hours)->addMinutes($minutes),
+////                    'started_at' => Carbon::now(),
+//
+//                ]);
                 break;
 
             default:

@@ -18,7 +18,7 @@ class PrivateClassController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $private = PrivateClassReservation::where('user_id', $user->id)->paginate(12);
+        $private = PrivateClassReservation::where('user_id', $user->id)->latest()->paginate(12);
         $private->getCollection()->transform(function ($item, $key) {
             $pastSessionsCount = $item->timeSlots
                 ->where('date', '<', now()->toDateString())
@@ -125,6 +125,33 @@ class PrivateClassController extends Controller
             });
         }
 
+        $now = Carbon::now();
+
+        $private->timeSlots()
+            ->whereIn('status', ['Upcoming', 'Today'])
+            ->get()
+            ->each(function ($slot) use ($now) {
+
+                $sessionDateTime = $slot->date->copy()->setTimeFrom($slot->time);
+
+                if ($sessionDateTime->isPast()) {
+                    $slot->update([
+                        'status' => 'Finished',
+                    ]);
+                    return;
+                }
+
+                if (
+                    $slot->status === 'Upcoming' &&
+                    $slot->date->isToday()
+                ) {
+                    $slot->update([
+                        'status' => 'Today',
+                    ]);
+                }
+            });
+
+
         return $timeSlots
             ->sortBy('session_number')
             ->values()
@@ -184,6 +211,7 @@ class PrivateClassController extends Controller
             'cancel_reason' => $request->cancel_reason,
             'cancel_reason_file' => null,
             'status' => 'cancelled',
+            'cancel_by' => 'student',
         ]);
         return api_response([], 'cancel');
     }

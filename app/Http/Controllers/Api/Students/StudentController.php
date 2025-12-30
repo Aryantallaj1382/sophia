@@ -100,7 +100,7 @@ class StudentController extends Controller
 
         $request->validate([
             'old_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
+            'new_password' => 'required',
         ]);
 
         $user = auth()->user();

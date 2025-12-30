@@ -33,7 +33,7 @@ class TicketController extends Controller
             'is_support_reply' => false,
         ]);
 
-        return api_response($ticket->id ,'تیکت با موفقیت ایجاد شد.');
+        return api_response($ticket->id ,'success');
     }
 
 
@@ -49,10 +49,16 @@ class TicketController extends Controller
 
 
         $filePath = null;
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filePath = $file->store('ticket_files', 'public'); // ذخیره در storage/app/public/ticket_files
+
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('ticket_files'), $fileName);
+
+            $filePath = 'ticket_files/' . $fileName;
         }
+
 
         TicketMessage::create([
             'ticket_id' => $ticket->id,
@@ -88,7 +94,7 @@ class TicketController extends Controller
                     'department' => $ticket->department,
                     'status' => $ticket->status,
                     'created_at' => $ticket->created_at,
-                    'last_message_at' => optional($ticket->messages->first())->created_at?->format('Y-m-d H:i'),
+                    'last_mess  age_at' => optional($ticket->messages->first())->created_at?->format('Y-m-d H:i'),
                 ];
             })
         );
@@ -122,7 +128,7 @@ class TicketController extends Controller
                     'sender_name' => $message->user->name,
                     'is_support_reply' => $message->is_support_reply,
                     'message' => $message->message ?? null,
-                    'file' => $message->file ? asset( $message->file) : null,
+                    'file' => $message->file ,
                     'sent_at' => $message->created_at?->format('Y-m-d H:i'),
                 ];
             }),
