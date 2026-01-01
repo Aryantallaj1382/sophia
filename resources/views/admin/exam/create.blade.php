@@ -96,7 +96,7 @@
                             name="expiration"
                             class="form-control"
                             step="1"
-                            value="{{ $exam->expiration }}">
+                           >
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">تعداد دفعات</label>

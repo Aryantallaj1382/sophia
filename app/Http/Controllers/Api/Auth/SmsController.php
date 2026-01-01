@@ -46,8 +46,6 @@ class SmsController extends Controller
 //        }
 
 
-
-
         $code = random_int(100000, 999999);
 
         Cache::put($cacheKey, [
